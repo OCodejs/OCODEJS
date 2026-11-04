@@ -67,14 +67,17 @@ test("all fragment links resolve and all links have accessible names and safe sc
 });
 
 test("local documentation and project assets referenced by the homepage exist", () => {
+  // Keep filesystem paths in a fixed allowlist; never resolve href values as paths.
+  const localTargets = ["infra/", "docs/logo/README.md", "docs/OPENAI-PLUGIN-DEVELOPMENT.md"];
   for (const link of elements("a")) {
     const href = link.attributes.href;
-    if (href.startsWith("#") || /^[a-z][\w+.-]*:/i.test(href)) continue;
-    const pathname = decodeURIComponent(href.split(/[?#]/, 1)[0]);
-    const target = resolve(root, pathname);
-    assert.ok(existsSync(target), `Missing local link target: ${href}`);
+    if (href.startsWith("#") || /^[a-z][\\w+.-]*:/i.test(href)) continue;
+    assert.ok(localTargets.includes(href), `Add the local link to the checked target list: ${href}`);
   }
-  for (const image of [...body.matchAll(/<img\b([^>]*)>/gi)]) {
+  for (const target of localTargets) {
+    assert.ok(existsSync(resolve(root, target)), `Missing local link target: ${target}`);
+  }
+  for (const image of [...body.matchAll(/<img\\b([^>]*)>/gi)]) {
     const attrs = attributes(image[1]);
     assert.ok(attrs.alt !== undefined, "Images must provide alt text");
   }
