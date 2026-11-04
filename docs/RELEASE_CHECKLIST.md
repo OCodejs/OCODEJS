@@ -25,7 +25,7 @@ Create a granular npm access token for the publisher account with package publis
 1. Open **Settings → Secrets and variables → Actions** for this repository.
 2. Create a repository secret named `NPM_TOKEN`.
 3. Paste the token into GitHub's secret-value field. Do not commit it, add it to a workflow file, or send it in chat.
-4. Re-run the release preflight and verify the secret is present without printing its value.
+4. Manually run **Publish npm package** with the `main` branch selected. Confirm the **Verify NPM_TOKEN is configured** step passes without printing its value. On `main`, the publish step is skipped.
 
 Repository settings: https://github.com/OCodejs/OCodejs/settings/secrets/actions
 
