@@ -85,18 +85,38 @@ test("local documentation and project assets referenced by the homepage exist", 
   }
 });
 
+function isCanonicalRepositoryUrl(value) {
+  try {
+    const url = new URL(value);
+    return url.protocol === "https:"
+      && url.hostname === "github.com"
+      && url.username === ""
+      && url.password === ""
+      && url.port === ""
+      && url.pathname.replace(/\\/+$/, "") === "/OCodejs/OCodejs";
+  } catch {
+    return false;
+  }
+}
+
 test("all source repository links point to the canonical OCodejs repository", () => {
-  const repositoryLinks = elements("a").filter((link) => {
-    try {
-      return new URL(link.attributes.href).hostname === "github.com";
-    } catch {
-      return false;
-    }
-  });
-  assert.ok(repositoryLinks.some((link) => {
-    const url = new URL(link.attributes.href);
-    return url.origin === "https://github.com" && url.pathname.replace(/\/+$/, "") === "/OCodejs/OCodejs";
-  }));
+  assert.ok(elements("a").some((link) => isCanonicalRepositoryUrl(link.attributes.href)));
+});
+
+test("repository URL validation rejects lookalike hosts and embedded hostnames", () => {
+  const maliciousUrls = [
+    "https://evil.example/github.com/OCodejs/OCodejs",
+    "https://github.com.evil.example/OCodejs/OCodejs",
+    "https://evilgithub.com/OCodejs/OCodejs",
+    "https://github.com@evil.example/OCodejs/OCodejs",
+    "http://github.com/OCodejs/OCodejs",
+    "https://github.com/OCodejs/OCodejs.evil.example",
+  ];
+
+  for (const value of maliciousUrls) {
+    assert.equal(isCanonicalRepositoryUrl(value), false, `Rejected unsafe repository URL: ${value}`);
+  }
+  assert.equal(isCanonicalRepositoryUrl("https://github.com/OCodejs/OCodejs"), true);
 });
 
 test("homepage styles are present, dark-themed and responsive", () => {
