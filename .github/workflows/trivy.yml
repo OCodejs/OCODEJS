@@ -6,12 +6,7 @@
 name: trivy
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-  schedule:
-    - cron: '15 2 * * 1'
+  workflow_dispatch:
 
 permissions:
   contents: read

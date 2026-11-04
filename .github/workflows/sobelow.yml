@@ -13,12 +13,7 @@
 name: Sobelow
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-  schedule:
-    - cron: '28 19 * * 0'
+  workflow_dispatch:
 
 permissions:
   contents: read
