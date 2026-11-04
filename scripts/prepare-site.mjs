@@ -6,7 +6,7 @@ export async function prepareSite(root) {
   const output = join(root, "_site");
   await rm(output, { recursive: true, force: true });
   await mkdir(output, { recursive: true });
-  for (const path of ["index.html", "README.md", "docs", "assets", "infra"]) {
+  for (const path of ["index.html", "README.md", "docs", "assets", "infra", "CNAME", "robots.txt", "sitemap.xml", "favicon.svg"]) {
     await cp(join(root, path), join(output, path), { recursive: true });
   }
 }
