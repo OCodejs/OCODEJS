@@ -106,13 +106,13 @@ test("chat assistant is initially hidden and has explicit accessible controls", 
 
 
 test("SEO metadata, robots policy, sitemap and favicon are published with the custom domain", () => {
-  assert.match(html, /<link\\b[^>]*rel=["']canonical["'][^>]*href=["']https:\\/\\/ocodejs\\.id\\.vn\\//i);
+  assert.ok(html.includes('<link rel="canonical" href="https://ocodejs.id.vn/">'));
   for (const property of ["og:type", "og:site_name", "og:title", "og:description", "og:url", "og:image"]) {
-    assert.match(html, new RegExp(`<meta\\b[^>]*property=["']${property}["']`, "i"), `Missing ${property}`);
+    assert.ok(html.includes(`property="${property}"`), `Missing ${property}`);
   }
   assert.ok(existsSync(resolve(root, "robots.txt")));
   assert.ok(existsSync(resolve(root, "sitemap.xml")));
   assert.ok(existsSync(resolve(root, "favicon.svg")));
-  assert.match(readFileSync(resolve(root, "robots.txt"), "utf8"), /Sitemap:\\s+https:\\/\\/ocodejs\\.id\\.vn\\/sitemap\\.xml/);
-  assert.match(readFileSync(resolve(root, "sitemap.xml"), "utf8"), /https:\\/\\/ocodejs\\.id\\.vn\\//);
+  assert.ok(readFileSync(resolve(root, "robots.txt"), "utf8").includes("Sitemap: https://ocodejs.id.vn/sitemap.xml"));
+  assert.ok(readFileSync(resolve(root, "sitemap.xml"), "utf8").includes("<loc>https://ocodejs.id.vn/</loc>"));
 });
