@@ -71,13 +71,14 @@ test("local documentation and project assets referenced by the homepage exist", 
   const localTargets = ["infra/", "docs/logo/README.md", "docs/OPENAI-PLUGIN-DEVELOPMENT.md"];
   for (const link of elements("a")) {
     const href = link.attributes.href;
-    if (href.startsWith("#") || /^[a-z][\\w+.-]*:/i.test(href)) continue;
+    const url = new URL(href, "https://ocodejs.id.vn/");
+    if (url.origin !== "https://ocodejs.id.vn") continue;
     assert.ok(localTargets.includes(href), `Add the local link to the checked target list: ${href}`);
   }
   for (const target of localTargets) {
     assert.ok(existsSync(resolve(root, target)), `Missing local link target: ${target}`);
   }
-  for (const image of [...body.matchAll(/<img\\b([^>]*)>/gi)]) {
+  for (const image of [...body.matchAll(/<img\b([^>]*)>/gi)]) {
     const attrs = attributes(image[1]);
     assert.ok(attrs.alt !== undefined, "Images must provide alt text");
   }
