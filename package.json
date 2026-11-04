@@ -49,7 +49,11 @@
       "import": "./dist/logger.js"
     }
   },
-  "files": ["dist", "README.md", "LICENSE"],
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "clean": "node -e \"import('node:fs').then(fs=>fs.rmSync('dist',{recursive:true,force:true}))\"",
     "build": "npm run clean && tsc -p tsconfig.json",
@@ -57,7 +61,14 @@
     "test:coverage": "npm run build && c8 --all --include=dist --exclude=dist/**/*.d.ts --reporter=text --reporter=lcov --reporter=html node --test tests/*.test.mjs",
     "prepack": "npm run build"
   },
-  "keywords": ["javascript", "typescript", "utilities", "web", "nextjs", "developer-tools"],
+  "keywords": [
+    "javascript",
+    "typescript",
+    "utilities",
+    "web",
+    "nextjs",
+    "developer-tools"
+  ],
   "engines": {
     "node": ">=18"
   },
@@ -67,12 +78,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Velclaw/OCode.js.git"
+    "url": "https://github.com/OCodejs/OCodejs.git"
   },
   "bugs": {
-    "url": "https://github.com/Velclaw/OCode.js/issues"
+    "url": "https://github.com/OCodejs/OCodejs/issues"
   },
-  "homepage": "https://github.com/Velclaw/OCode.js#readme",
+  "homepage": "https://github.com/OCodejs/OCodejs#readme",
   "dependencies": {
     "@vercel/analytics": "^2.0.1"
   }
