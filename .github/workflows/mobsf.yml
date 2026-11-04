@@ -1,12 +1,8 @@
 # MobSF static analysis workflow
 name: MobSF
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-  schedule:
-    - cron: '16 22 * * 4'
+  workflow_dispatch:
+
 permissions:
   contents: read
 jobs:
