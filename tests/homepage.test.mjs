@@ -73,10 +73,10 @@ test("local documentation and project assets referenced by the homepage exist", 
     const href = link.attributes.href;
     const url = new URL(href, "https://ocodejs.id.vn/");
     if (url.origin !== "https://ocodejs.id.vn") continue;
-    assert.ok(localTargets.includes(href), `Add the local link to the checked target list: ${href}`);
+    assert.ok(localTargets.includes(href), "Add the local link to the checked target list: " + href);
   }
   for (const target of localTargets) {
-    assert.ok(existsSync(resolve(root, target)), `Missing local link target: ${target}`);
+    assert.ok(existsSync(resolve(root, target)), "Missing local link target: " + target);
   }
   for (const image of [...body.matchAll(/<img\b([^>]*)>/gi)]) {
     const attrs = attributes(image[1]);
