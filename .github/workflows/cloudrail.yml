@@ -6,7 +6,12 @@
 name: Cloudrail
 
 on:
-  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  schedule:
+    - cron: '15 22 * * 5'
 
 jobs:
   cloudrail:
