@@ -71,6 +71,7 @@ test("local documentation and project assets referenced by the homepage exist", 
   const localTargets = ["infra/", "docs/logo/README.md", "docs/OPENAI-PLUGIN-DEVELOPMENT.md"];
   for (const link of elements("a")) {
     const href = link.attributes.href;
+    if (href.startsWith("#")) continue;
     const url = new URL(href, "https://ocodejs.id.vn/");
     if (url.origin !== "https://ocodejs.id.vn") continue;
     assert.ok(localTargets.includes(href), "Add the local link to the checked target list: " + href);
