@@ -93,7 +93,7 @@ function isCanonicalRepositoryUrl(value) {
       && url.username === ""
       && url.password === ""
       && url.port === ""
-      && url.pathname.replace(/\\/+$/, "") === "/OCodejs/OCodejs";
+      && url.pathname.replace(/\/+$/, "") === "/OCodejs/OCodejs";
   } catch {
     return false;
   }
