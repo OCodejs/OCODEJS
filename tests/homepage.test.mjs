@@ -38,7 +38,9 @@ function section(id) {
   return matches[0].content;
 }
 
-const css = only("style").content;
+const styleBlocks = elements("style");
+assert.ok(styleBlocks.length > 0, "Homepage must include its stylesheet");
+const css = styleBlocks.map((block) => block.content).join("\n");
 const body = only("body").content;
 
 function media(query) {
