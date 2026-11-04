@@ -1,0 +1,28 @@
+documentation:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/*.md"
+          - "docs/**"
+          - "infra/**"
+tests:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "tests/**"
+dependencies:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "package.json"
+          - "package-lock.json"
+          - "apps/**/package.json"
+          - "apps/**/package-lock.json"
+github-actions:
+  - changed-files:
+      - any-glob-to-any-file:
+          - ".github/workflows/**"
+          - ".github/labeler.yml"
+source:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "src/**"
+          - "scripts/**"
+          - "apps/**"
