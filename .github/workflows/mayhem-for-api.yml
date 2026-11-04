@@ -7,6 +7,8 @@ jobs:
   mayhem-for-api:
     name: Mayhem for API
     runs-on: ubuntu-latest
+    env:
+      MAYHEM_TOKEN: ${{ secrets.MAYHEM_TOKEN }}
     permissions:
       actions: read
       contents: read
@@ -17,7 +19,7 @@ jobs:
         if: ${{ hashFiles('run_your_api.sh') != '' }}
         run: ./run_your_api.sh &
       - name: Mayhem for API
-        if: ${{ secrets.MAYHEM_TOKEN != '' && hashFiles('run_your_api.sh') != '' }}
+        if: ${{ env.MAYHEM_TOKEN != '' && hashFiles('run_your_api.sh') != '' }}
         uses: ForAllSecure/mapi-action@c31b1886401e3db6ec5c7d7d0ffa4dd6716628cf # v1
         continue-on-error: true
         with:
