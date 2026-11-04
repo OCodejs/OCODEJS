@@ -58,7 +58,7 @@
     "clean": "node -e \"import('node:fs').then(fs=>fs.rmSync('dist',{recursive:true,force:true}))\"",
     "build": "npm run clean && tsc -p tsconfig.json",
     "test": "npm run build && node --test tests/*.test.mjs",
-    "test:coverage": "npm run build && node --experimental-test-coverage --test tests/*.test.mjs",
+    "test:coverage": "npm run build && mkdir -p coverage && node --experimental-test-coverage --test --test-reporter=lcov --test-reporter-destination=coverage/lcov.info tests/*.test.mjs",
     "prepack": "npm run build"
   },
   "keywords": [
