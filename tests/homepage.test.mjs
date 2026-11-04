@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { existsSync, readFileSync, statSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -84,8 +84,17 @@ test("local documentation and project assets referenced by the homepage exist", 
 });
 
 test("all source repository links point to the canonical OCodejs repository", () => {
-  const repositoryLinks = elements("a").filter((link) => link.attributes.href?.includes("github.com/"));
-  assert.ok(repositoryLinks.some((link) => link.attributes.href === "https://github.com/OCodejs/OCodejs"));
+  const repositoryLinks = elements("a").filter((link) => {
+    try {
+      return new URL(link.attributes.href).hostname === "github.com";
+    } catch {
+      return false;
+    }
+  });
+  assert.ok(repositoryLinks.some((link) => {
+    const url = new URL(link.attributes.href);
+    return url.origin === "https://github.com" && url.pathname.replace(/\\/+$/, "") === "/OCodejs/OCodejs";
+  }));
 });
 
 test("homepage styles are present, dark-themed and responsive", () => {
