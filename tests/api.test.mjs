@@ -134,3 +134,58 @@ test("getLocalStorage is safe when storage is absent or throws", () => {
     else delete globalThis.localStorage;
   }
 });
+
+test("fetchJson enforces a timeout and preserves the timeout as the cause", async (t) => {
+  t.mock.method(globalThis, "fetch", (_input, init) => new Promise((_resolve, reject) => {
+    init.signal.addEventListener("abort", () => reject(init.signal.reason), { once: true });
+  }));
+
+  await assert.rejects(fetchJson("https://example.test/slow", { timeoutMs: 5 }), (error) => {
+    assert.match(error.message, /Request timed out after 5ms/);
+    assert.ok(error.cause);
+    return true;
+  });
+});
+
+test("fetchJson forwards caller abort signals when a timeout is configured", async (t) => {
+  const controller = new AbortController();
+  t.mock.method(globalThis, "fetch", (_input, init) => new Promise((_resolve, reject) => {
+    init.signal.addEventListener("abort", () => reject(init.signal.reason), { once: true });
+  }));
+
+  const request = fetchJson("https://example.test/cancel", {
+    timeoutMs: 1_000,
+    signal: controller.signal
+  });
+  controller.abort(new Error("caller cancelled"));
+  await assert.rejects(request, /caller cancelled/);
+});
+
+test("fetchJson rejects invalid timeout values before making a request", async (t) => {
+  let calls = 0;
+  t.mock.method(globalThis, "fetch", async () => {
+    calls++;
+    return new Response("{}");
+  });
+
+  for (const timeoutMs of [0, -1, Number.NaN, Number.POSITIVE_INFINITY]) {
+    await assert.rejects(fetchJson("https://example.test/invalid-timeout", { timeoutMs }), RangeError);
+  }
+  assert.equal(calls, 0);
+});
+
+test("fetchJson propagates network failures without replacing their error", async (t) => {
+  const networkError = new TypeError("network unavailable");
+  t.mock.method(globalThis, "fetch", async () => { throw networkError; });
+  await assert.rejects(fetchJson("https://example.test/offline"), (error) => error === networkError);
+});
+
+test("jsonRequest accepts Headers and keeps caller-provided content types", () => {
+  const headers = new Headers({ "content-type": "application/vnd.api+json", "x-trace": "trace-1" });
+  const request = jsonRequest({ data: 1 }, { headers });
+  const result = new Headers(request.headers);
+  assert.equal(result.get("content-type"), "application/vnd.api+json");
+  assert.equal(result.get("x-trace"), "trace-1");
+  assert.equal(result.get("accept"), "application/json");
+});
+\n
