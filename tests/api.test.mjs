@@ -188,4 +188,4 @@ test("jsonRequest accepts Headers and keeps caller-provided content types", () =
   assert.equal(result.get("x-trace"), "trace-1");
   assert.equal(result.get("accept"), "application/json");
 });
-\n
+
