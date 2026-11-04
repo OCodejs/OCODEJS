@@ -5,12 +5,8 @@
 
 name: Endor Labs
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-  schedule:
-    - cron: '25 6 * * 1'
+  workflow_dispatch:
+
 jobs:
   scan:
     permissions:
