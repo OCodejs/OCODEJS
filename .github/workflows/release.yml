@@ -41,7 +41,7 @@ jobs:
         run: npm pack --dry-run
 
       - name: Verify NPM_TOKEN is configured
-        if: startsWith(github.ref, 'refs/tags/v')
+        if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v')
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
