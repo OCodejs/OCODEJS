@@ -1,107 +1,85 @@
----
-description: Get up and running with the Groq API in minutes: create an API key, set up your environment, and make your first request.
-title: Quickstart - GroqDocs
-image: https://console.groq.com/og_cloudv5.jpg
----
+# OCode.js Quick Start
 
-# Quickstart
+OCode.js (ocode-js) is a small, dependency-free JavaScript and TypeScript utility library. It is distributed as ECMAScript modules (ESM) and includes TypeScript declarations.
 
-Get up and running with the Groq API in a few minutes, with the steps below.
+> **Release status:** Version 0.1.0 is prepared in this repository but is not yet available from the public npm registry. Do not expect npm install ocode-js to work until the release workflow has published it.
 
-For additional support, catch our [onboarding video](https://console.groq.com/docs/overview).
+## Requirements
 
-## [Create an API Key](#create-an-api-key)
+- Node.js 18 or newer
+- npm
 
-Please visit [here](https://console.groq.com/keys) to create an API Key.
+## Install after the npm release
 
-## [Set up your API Key (recommended)](#set-up-your-api-key-recommended)
+Once ocode-js@0.1.0 is visible in the npm registry:
 
-Configure your API key as an environment variable. This approach streamlines your API usage by eliminating the need to include your API key in each request. Moreover, it enhances security by minimizing the risk of inadvertently including your API key in your codebase.
+~~~sh
+npm install ocode-js
+~~~
 
-### [In your terminal of choice:](#in-your-terminal-of-choice)
+## Use the library
 
-shell
+~~~ts
+import { slugify, retry, withQuery } from "ocode-js";
+import { deepMerge } from "ocode-js/object";
+import { fetchJson } from "ocode-js/http";
 
-```
-export GROQ_API_KEY=<your-api-key-here>
-```
+const slug = slugify("Hello OCode.js");
 
-## [Requesting your first chat completion](#requesting-your-first-chat-completion)
-
-curlJavaScriptPythonJSON
-
-### [Install the Groq Python library:](#install-the-groq-python-library)
-
-shell
-
-```
-pip install groq
-```
-
-### [Performing a Chat Completion:](#performing-a-chat-completion)
-
-Python
-
-```
-import os
-
-from groq import Groq
-
-client = Groq(
-    api_key=os.environ.get("GROQ_API_KEY"),
-)
-
-chat_completion = client.chat.completions.create(
-    messages=[
-        {
-            "role": "user",
-            "content": "Explain the importance of fast language models",
-        }
-    ],
-    model="llama-3.3-70b-versatile",
-)
-
-print(chat_completion.choices[0].message.content)
-```
-
-## [Using third-party libraries and SDKs](#using-thirdparty-libraries-and-sdks)
-
-Vercel AI SDKLiteLLMLangChain
-
-### [Using AI SDK:](#using-ai-sdk)
-
-[AI SDK](https://ai-sdk.dev/) is a Javascript-based open-source library that simplifies building large language model (LLM) applications. Documentation for how to use Groq on the AI SDK [can be found here](https://console.groq.com/docs/ai-sdk/).
-
-  
-First, install the `ai` package and the Groq provider `@ai-sdk/groq`:
-
-  
-shell
-
-```
-pnpm add ai @ai-sdk/groq
-```
-
-  
-Then, you can use the Groq provider to generate text. By default, the provider will look for `GROQ_API_KEY` as the API key.
-
-  
-JavaScript
-
-```
-import { groq } from '@ai-sdk/groq';
-import { generateText } from 'ai';
-
-const { text } = await generateText({
-  model: groq('llama-3.3-70b-versatile'),
-  prompt: 'Write a vegetarian lasagna recipe for 4 people.',
+const url = withQuery("https://example.com/search", {
+  q: "OCode.js",
+  page: 1
 });
-```
 
-Now that you have successfully received a chat completion, you can try out the other endpoints in the API.
+const config = deepMerge(
+  { server: { port: 3000 }, features: { cache: true } },
+  { server: { host: "127.0.0.1" } }
+);
 
-### [Next Steps](#next-steps)
+const data = await fetchJson("https://example.com/api/status");
+~~~
 
-* Check out the [Playground](https://console.groq.com/playground) to try out the Groq API in your browser
-* Join our GroqCloud [developer community](https://community.groq.com/)
-* Add a how-to on your project to the [Groq API Cookbook](https://github.com/groq/groq-api-cookbook)
+## Available import paths
+
+| Import | Module |
+| --- | --- |
+| ocode-js | Core exports from all modules |
+| ocode-js/string | String helpers |
+| ocode-js/object | Object helpers |
+| ocode-js/async | Async helpers |
+| ocode-js/url | URL and query-string helpers |
+| ocode-js/validation | Validation helpers |
+| ocode-js/http | Fetch and JSON request helpers |
+| ocode-js/browser | Browser storage helpers |
+| ocode-js/env | Environment variable readers |
+| ocode-js/logger | Configurable logger |
+
+See the [API reference](API.md) for function behavior and examples.
+
+## Work from a source checkout
+
+Until the npm package is published, contributors can build and test the repository directly:
+
+~~~sh
+git clone https://github.com/OCodejs/OCodejs.git
+cd OCodejs
+npm ci
+npm test
+~~~
+
+Build output and TypeScript declaration files are generated in dist/.
+
+## Runtime notes
+
+- OCode.js has no runtime dependencies; TypeScript is a development dependency used to compile the source.
+- The package is ESM. Use import in Node.js and compatible bundlers.
+- Browser helpers guard access to localStorage and can safely be imported during server-side rendering.
+- escapeHtml escapes common HTML characters; it is not a general-purpose HTML sanitizer.
+- Environment helpers read process.env when available, but accept an explicit source object for tests and non-Node runtimes.
+
+## Next steps
+
+- [API reference](API.md)
+- [Terminal and contributor workflow](TERMINAL.md)
+- [Release checklist](RELEASE-CHECKLIST-v0.1.0.md)
+- [Contributing guide](../CONTRIBUTING.md)
