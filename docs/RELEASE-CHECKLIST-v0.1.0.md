@@ -2,7 +2,7 @@
 
 Package: `ocode-js`  
 Initial version: `0.1.0`  
-Repository: https://github.com/Velclaw/OCodejs
+Repository: https://github.com/OCodejs/OCodejs
 
 ## Before release
 
@@ -12,7 +12,7 @@ Repository: https://github.com/Velclaw/OCodejs
 - [ ] Add it as repository Actions secret named `NPM_TOKEN`: Settings → Secrets and variables → Actions → New repository secret.
 - [ ] Verify that the workflow can read the secret without printing it. GitHub does not reveal an existing secret's value.
 - [ ] Review README/API docs, LICENSE, package exports, supported Node.js version, and the `files` allowlist.
-- [ ] Run `npm install --no-audit --no-fund`, `npm test`, `npm run test:coverage`, and `npm pack --dry-run`.
+- [ ] Run the manual Terminal Task workflow with `validate`, then inspect the `npm pack --dry-run` output.
 - [ ] Inspect the package tarball contents and ensure no credentials, environment files, tests, private files, or unintended generated files are included.
 - [ ] Confirm all required CI checks pass on the release PR and the intended commit is merged to `main`.
 

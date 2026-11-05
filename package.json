@@ -7,6 +7,9 @@
   "sideEffects": false,
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "bin": {
+    "ocode-task": "./bin/ocode-task.mjs"
+  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -50,6 +53,7 @@
     }
   },
   "files": [
+    "bin",
     "dist",
     "README.md",
     "LICENSE"
@@ -59,6 +63,7 @@
     "build": "npm run clean && tsc -p tsconfig.json",
     "test": "npm run build && node --test tests/*.test.mjs",
     "test:coverage": "npm run build && mkdir -p coverage && node --experimental-test-coverage --test --test-reporter=lcov --test-reporter-destination=coverage/lcov.info tests/*.test.mjs",
+    "task": "node ./bin/ocode-task.mjs",
     "prepack": "npm run build"
   },
   "keywords": [
@@ -67,7 +72,9 @@
     "utilities",
     "web",
     "nextjs",
-    "developer-tools"
+    "developer-tools",
+    "terminal-task-manager",
+    "cli"
   ],
   "engines": {
     "node": ">=18"

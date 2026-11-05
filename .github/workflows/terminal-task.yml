@@ -1,0 +1,63 @@
+name: Terminal Task
+
+on:
+  workflow_dispatch:
+    inputs:
+      task:
+        description: Select a safe, predefined terminal task
+        required: true
+        type: choice
+        default: validate
+        options:
+          - validate
+          - task-smoke
+          - package-preview
+
+permissions:
+  contents: read
+
+jobs:
+  terminal:
+    name: Run ${{ inputs.task }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+      - name: Set up Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Build and run tests
+        if: inputs.task == 'validate'
+        run: npm test
+
+      - name: Generate coverage report
+        if: inputs.task == 'validate'
+        run: npm run test:coverage
+
+      - name: Smoke-test Terminal Task CLI
+        if: inputs.task == 'task-smoke'
+        run: node --test tests/terminal-task.test.mjs
+
+      - name: Preview npm package
+        if: inputs.task != 'task-smoke'
+        run: npm pack --dry-run
+
+      - name: Record task result
+        if: always()
+        run: |
+          {
+            echo "## Terminal Task"
+            echo ""
+            echo "- Task: ${{ inputs.task }}"
+            echo "- Ref: ${GITHUB_REF_NAME}"
+            echo "- Commit: ${GITHUB_SHA}"
+            echo "- Publishing: disabled"
+          } >> "$GITHUB_STEP_SUMMARY"

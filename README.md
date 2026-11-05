@@ -10,7 +10,8 @@ A lightweight JavaScript / TypeScript utility toolkit for modern applications.
 
 <p>
   <a href="docs/API.md">API Reference</a> ·
-  <a href="#quick-start">Quick Start</a> ·
+  <a href="docs/quickstart.md">Quick Start</a> ·
+  <a href="docs/TERMINAL.md">Terminal Tasks</a> ·
   <a href="#tiếng-việt">Tiếng Việt</a> ·
   <a href="https://github.com/OCodejs/OCodejs/issues">Issues</a>
 </p>
@@ -71,7 +72,7 @@ The package has **not been published to npm yet**. To try the current source:
 ```bash
 git clone https://github.com/OCodejs/OCodejs.git
 cd OCodejs
-npm install
+npm ci
 npm test
 ```
 
@@ -136,7 +137,7 @@ See the [Next.js example](examples/nextjs/README.md).
 Run the build and test suite locally:
 
 ```bash
-npm install
+npm ci
 npm run build
 npm test
 ```
@@ -147,7 +148,7 @@ Generate a coverage report:
 npm run test:coverage
 ```
 
-The project uses TypeScript in strict mode and Node.js's built-in test runner. GitHub Actions runs CI for repository changes.
+The project uses TypeScript in strict mode and Node.js's built-in test runner. GitHub Actions runs CI for repository changes. See the [Terminal Tasks guide](docs/TERMINAL.md) for local commands and the manual Terminal Task workflow.
 
 ## Roadmap
 
@@ -192,7 +193,7 @@ Hiện tại, package **chưa được phát hành lên npm**. Clone mã nguồn
 ```bash
 git clone https://github.com/OCodejs/OCodejs.git
 cd OCodejs
-npm install
+npm ci
 npm test
 ```
 
@@ -205,10 +206,12 @@ OCode.js **không thay thế Next.js hoặc Vercel**; đây là thư viện ti�
 ### Tài liệu và phát triển
 
 - [Tài liệu API](docs/API.md)
+- [Terminal Tasks và quy trình phát triển](docs/TERMINAL.md)
+- [Hướng dẫn bắt đầu](docs/quickstart.md)
 - [Ví dụ Next.js](examples/nextjs/README.md)
 - [Báo lỗi / đề xuất](https://github.com/OCodejs/OCodejs/issues)
 
-Yêu cầu Node.js 18+. Chạy `npm install`, sau đó `npm test` để build TypeScript và thực thi bộ kiểm thử.
+Yêu cầu Node.js 18+. Chạy `npm ci`, sau đó `npm test` để build TypeScript và thực thi bộ kiểm thử.
 
 ### Lộ trình
 
