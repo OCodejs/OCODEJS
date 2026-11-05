@@ -91,7 +91,7 @@ export async function run(argv = process.argv.slice(2), cwd = process.cwd()) {
     const priority = options.priority ?? 'medium';
     if (!PRIORITIES.has(priority)) throw new Error('Priority must be low, medium, or high.');
     const due = options.due;
-    if (due && (!/^\\d{4}-\\d{2}-\\d{2}$/.test(due) || Number.isNaN(Date.parse(`${due}T00:00:00Z`)) || new Date(`${due}T00:00:00Z`).toISOString().slice(0, 10) !== due)) {
+    if (due && (!/^\d{4}-\d{2}-\d{2}$/.test(due) || Number.isNaN(Date.parse(`${due}T00:00:00Z`)) || new Date(`${due}T00:00:00Z`).toISOString().slice(0, 10) !== due)) {
       throw new Error('Due date must use YYYY-MM-DD.');
     }
     const task = { id: randomUUID(), title, status: 'todo', priority, createdAt: new Date().toISOString(), ...(due ? { due } : {}) };
