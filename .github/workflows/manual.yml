@@ -12,6 +12,12 @@ on:
         default: 'World'
         required: true
         type: string
+    inputs:
+      name:
+        description: 'Person to greet'
+        default: 'World'
+        required: true
+        type: string
 
 jobs:
   # This workflow contains a single job called "greet"
