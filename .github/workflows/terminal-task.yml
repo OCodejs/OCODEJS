@@ -10,6 +10,7 @@ on:
         default: validate
         options:
           - validate
+          - task-smoke
           - package-preview
 
 permissions:
@@ -41,7 +42,12 @@ jobs:
         if: inputs.task == 'validate'
         run: npm run test:coverage
 
+      - name: Smoke-test Terminal Task CLI
+        if: inputs.task == 'task-smoke'
+        run: node --test tests/terminal-task.test.mjs
+
       - name: Preview npm package
+        if: inputs.task != 'task-smoke'
         run: npm pack --dry-run
 
       - name: Record task result
@@ -50,8 +56,8 @@ jobs:
           {
             echo "## Terminal Task"
             echo ""
-            echo "- Task: `${{ inputs.task }}`"
-            echo "- Ref: `${GITHUB_REF_NAME}`"
-            echo "- Commit: `${GITHUB_SHA}`"
+            echo "- Task: ${{ inputs.task }}"
+            echo "- Ref: ${GITHUB_REF_NAME}"
+            echo "- Commit: ${GITHUB_SHA}"
             echo "- Publishing: disabled"
           } >> "$GITHUB_STEP_SUMMARY"
