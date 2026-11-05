@@ -22,12 +22,38 @@ npm ci
 
 The npm ci command installs the exact dependency tree recorded in package-lock.json.
 
-## Standard terminal tasks
+## OCode.js Terminal Task Manager
+
+OCode.js ships a dependency-free CLI named `ocode-task`. It manages a local task list and does not execute task titles or arbitrary shell commands.
+
+~~~sh
+# Add tasks
+npx ocode-js task add "Ship the next release" --priority high --due 2026-12-01
+# or, after installing the package:
+ocode-task add "Review pull request" --priority medium
+
+# List all tasks or filter by status
+ocode-task list
+ocode-task list --status in-progress
+ocode-task list --status done --json
+
+# Update and remove tasks (use the ID printed by add/list)
+ocode-task start <task-id>
+ocode-task done <task-id>
+ocode-task remove <task-id>
+
+# Show command help
+ocode-task help
+~~~
+
+Task data is stored in `.ocode/tasks.json` in the current working directory. The store is local to each project and should not be committed. Tasks support `todo`, `in-progress`, and `done` states; `low`, `medium`, and `high` priorities; and optional `YYYY-MM-DD` due dates.
+
+## Standard development tasks
 
 | Task | Command | Purpose |
 | --- | --- | --- |
 | Build | **npm run build** | Clean and compile TypeScript into dist/ |
-| Tests | **npm test** | Build, then run the Node.js test suite |
+| Tests | **npm test** | Build, then run the Node.js test suite, including CLI tests |
 | Coverage | **npm run test:coverage** | Write LCOV coverage to coverage/lcov.info |
 | Package preview | **npm pack --dry-run** | Preview files included in the npm tarball |
 | Clean | **npm run clean** | Remove generated dist/ output |
@@ -43,7 +69,7 @@ git diff --check
 git status --short
 ~~~
 
-Treat a task as passing only when its process exits with status 0. Inspect the package preview before release. The current dry-run also reports root README.markdown, readme.mdx, and lowercase license files in addition to README.md, LICENSE, package.json, and dist/. Confirm these extra README/license files are intentional before publishing; do not assume the files allowlist alone proves the tarball contents.
+Treat a task as passing only when its process exits with status 0. Inspect the package preview before release. The package allowlist includes the CLI under `bin/`; verify the tarball contains the intended CLI entry point.
 
 ## Run a Terminal Task from GitHub Actions
 
@@ -57,6 +83,7 @@ The repository provides a manual workflow named **Terminal Task**:
 Available tasks:
 
 - **validate** — install dependencies, run the build and tests, generate coverage, and preview the npm package.
+- **task-smoke** — run the Terminal Task CLI test suite.
 - **package-preview** — install dependencies and preview the npm package without publishing it.
 
 The workflow accepts only predefined tasks. It does not accept arbitrary shell commands, read or print secrets, create deployments, or publish to npm. Normal CI still runs automatically on pull requests and pushes to main.
