@@ -193,7 +193,7 @@ Hiện tại, package **chưa được phát hành lên npm**. Clone mã nguồn
 ```bash
 git clone https://github.com/OCodejs/OCodejs.git
 cd OCodejs
-npm install
+npm ci
 npm test
 ```
 
@@ -211,7 +211,7 @@ OCode.js **không thay thế Next.js hoặc Vercel**; đây là thư viện ti�
 - [Ví dụ Next.js](examples/nextjs/README.md)
 - [Báo lỗi / đề xuất](https://github.com/OCodejs/OCodejs/issues)
 
-Yêu cầu Node.js 18+. Chạy `npm install`, sau đó `npm test` để build TypeScript và thực thi bộ kiểm thử.
+Yêu cầu Node.js 18+. Chạy `npm ci`, sau đó `npm test` để build TypeScript và thực thi bộ kiểm thử.
 
 ### Lộ trình
 
