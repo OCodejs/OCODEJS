@@ -17,6 +17,10 @@ Mở `/authorize` để chọn GitHub, Google hoặc Discord. Đăng ký callbac
 
 Portal có lựa chọn **Custom OAuth 2.0** tại `/authorize`. Cấu hình `CUSTOM_OAUTH_AUTHORIZATION_URL`, `CUSTOM_OAUTH_TOKEN_URL`, `CUSTOM_OAUTH_USERINFO_URL`, `CUSTOM_OAUTH_CLIENT_ID`, `CUSTOM_OAUTH_CLIENT_SECRET`, `CUSTOM_OAUTH_ALLOWED_USERS` và `APP_ORIGIN`. Callback URL cần đăng ký ở identity provider là `${APP_ORIGIN}/api/auth/custom/callback`. Mặc định scope là `openid email profile`; có thể đổi bằng `CUSTOM_OAUTH_SCOPE`. Userinfo mặc định đọc `email` làm login và `sub` làm provider ID; dùng `CUSTOM_OAUTH_LOGIN_FIELD` / `CUSTOM_OAUTH_ID_FIELD` với dot-path nếu provider trả schema khác. Token endpoint mặc định dùng `client_secret_post`; có thể đặt `CUSTOM_OAUTH_TOKEN_AUTH_METHOD=client_secret_basic`. PKCE S256 và state cookie HttpOnly được bật trong authorization flow. Allowlist dùng `CUSTOM_OAUTH_ALLOWED_USERS` (danh sách email/username, phân tách bằng dấu phẩy). Authorization URL, token URL và userinfo URL phải dùng HTTPS (ngoại trừ localhost). Client secret chỉ ở server environment, tuyệt đối không dùng `NEXT_PUBLIC_*`.
 
+## Custom OAuth 2.0 provider
+
+Chọn **Custom OAuth 2.0** tại `/authorize`. Cấu hình `CUSTOM_OAUTH_AUTHORIZATION_URL`, `CUSTOM_OAUTH_TOKEN_URL`, `CUSTOM_OAUTH_USERINFO_URL`, `CUSTOM_OAUTH_CLIENT_ID`, `CUSTOM_OAUTH_CLIENT_SECRET`, `CUSTOM_OAUTH_ALLOWED_USERS` và `APP_ORIGIN` trong server environment. Đăng ký callback URL `${APP_ORIGIN}/api/auth/custom/callback` tại identity provider. Mặc định scope là `openid email profile`; thay đổi bằng `CUSTOM_OAUTH_SCOPE`. Userinfo mặc định dùng `email` làm login và `sub` làm provider ID; có thể đổi bằng `CUSTOM_OAUTH_LOGIN_FIELD` và `CUSTOM_OAUTH_ID_FIELD` (hỗ trợ dot-path). Token endpoint mặc định dùng `client_secret_post`; có thể chọn `client_secret_basic` qua `CUSTOM_OAUTH_TOKEN_AUTH_METHOD`. Flow dùng state cookie HttpOnly và PKCE S256. Allowlist dùng `CUSTOM_OAUTH_ALLOWED_USERS`. Các endpoint phải dùng HTTPS ngoài localhost. Không đặt client secret trong biến `NEXT_PUBLIC_*`.
+
 ## Chạy local
 Yêu cầu Node.js >=20.9 và npm.
 ```sh
