@@ -1,5 +1,4 @@
 import test from "node:test";
-import { readFile } from "node:fs/promises";
 import assert from "node:assert/strict";
 import { mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -35,6 +34,14 @@ test("saved selections are filtered against known plugin ids", () => {
   const result = readInstalled(storage, "plugins", ["a", "b"]);
   assert.equal(result.ok, true);
   assert.deepEqual([...result.installed], ["a"]);
+});
+
+test("storage saves and restores selections", () => {
+  let saved = null;
+  const storage = { getItem: () => saved, setItem: (_key, value) => { saved = value; } };
+  const result = writeInstalled(storage, "plugins", new Set(["a", "b"]));
+  assert.equal(result.ok, true);
+  assert.deepEqual([...readInstalled(storage, "plugins", ["a", "b"]).installed], ["a", "b"]);
 });
 
 test("storage read and write failures are surfaced", () => {
