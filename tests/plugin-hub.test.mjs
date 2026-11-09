@@ -1,9 +1,10 @@
 import test from "node:test";
+import { readFile } from "node:fs/promises";
 import assert from "node:assert/strict";
 import { mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { filterPlugins, readInstalled, toggleSelection, writeInstalled } from "../plugin-hub.js";
+import { PLUGIN_CATALOG, filterPlugins, readInstalled, toggleSelection, writeInstalled } from "../plugin-hub.js";
 import { prepareSite } from "../scripts/prepare-site.mjs";
 
 const plugins = [
@@ -49,4 +50,24 @@ test("selection toggles return a new set without mutating the previous value", (
   assert.deepEqual([...current], ["a"]);
   assert.deepEqual([...added], ["a", "b"]);
   assert.deepEqual([...toggleSelection(added, "a")], ["b"]);
+});
+
+test("catalog entries have unique ids and complete integration metadata", () => {
+  const ids = PLUGIN_CATALOG.map((plugin) => plugin.id);
+  assert.equal(new Set(ids).size, ids.length);
+  for (const plugin of PLUGIN_CATALOG) {
+    assert.ok(plugin.name);
+    assert.ok(["Skills", "MCP", "Integration", "Template"].includes(plugin.type));
+    assert.ok(plugin.description);
+    assert.ok(Array.isArray(plugin.tags));
+    assert.ok(Array.isArray(plugin.steps));
+    assert.ok(plugin.note);
+  }
+});
+
+test("plugin detail dialog closes cleanly and does not reopen after selection changes", async () => {
+  const html = await readFile(new URL("../plugin-hub.html", import.meta.url), "utf8");
+  assert.match(html, /<dialog id="details"/);
+  assert.match(html, /addEventListener\("close",\(\)=>\{activePlugin=null\}\)/);
+  assert.match(html, /if\(activePlugin&&\$\("details"\)\.open\)showDetails\(activePlugin\)/);
 });
