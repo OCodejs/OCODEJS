@@ -7,7 +7,7 @@ const CONFIG={
  discord:{id:"DISCORD_CLIENT_ID",secret:"DISCORD_CLIENT_SECRET",authorizeUrl:"https://discord.com/oauth2/authorize",tokenUrl:"https://discord.com/api/oauth2/token",userUrl:"https://discord.com/api/users/@me",scope:"identify email"}
 } as const;
 export function isOAuthProvider(v:string):v is OAuthProvider{return (OAUTH_PROVIDERS as readonly string[]).includes(v);}
-export function callbackUrl(p:OAuthProvider){const origin=process.env.APP_ORIGIN;if(!origin)throw new Error("APP_ORIGIN is required.");return new URL("/api/auth/callback/"+p,origin).toString();}
+export function callbackUrl(p:OAuthProvider){const origin=process.env.APP_ORIGIN;if(!origin)throw new Error("APP_ORIGIN is required.");return new URL(p==="github"?"/api/auth/callback":"/api/auth/callback/"+p,origin).toString();}
 export function stateCookieName(p:OAuthProvider){return "ocode_oauth_state_"+p;}
 export function stateCookieOptions(p:OAuthProvider){return {httpOnly:true,secure:process.env.NODE_ENV==="production",sameSite:"lax" as const,path:"/api/auth/callback/"+p,maxAge:600};}
 export function createOAuthState(){return randomBytes(32).toString("base64url");}
