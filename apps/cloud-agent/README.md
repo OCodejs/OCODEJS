@@ -11,7 +11,7 @@
 
 ## OAuth Authorization Portal
 
-Mở `/authorize` để chọn GitHub, Google hoặc Discord. Đăng ký callback URL tương ứng: `APP_ORIGIN/api/auth/callback/github`, `APP_ORIGIN/api/auth/callback/google`, `APP_ORIGIN/api/auth/callback/discord`. Cấu hình client ID/secret và allowlist riêng (`GITHUB_ALLOWED_USERS`, `GOOGLE_ALLOWED_USERS`, `DISCORD_ALLOWED_USERS`) trong environment của server. Google allowlist dùng email đã xác minh; GitHub/Discord dùng username. Không đặt client secret trong biến `NEXT_PUBLIC_*`.
+Mở `/authorize` để chọn GitHub, Google hoặc Discord. Đăng ký callback URL tương ứng: `APP_ORIGIN/api/auth/callback` (GitHub), `APP_ORIGIN/api/auth/callback/google`, `APP_ORIGIN/api/auth/callback/discord`. Cấu hình client ID/secret và allowlist riêng (`GITHUB_ALLOWED_USERS`, `GOOGLE_ALLOWED_USERS`, `DISCORD_ALLOWED_USERS`) trong environment của server. Google allowlist dùng email đã xác minh; GitHub/Discord dùng username. Không đặt client secret trong biến `NEXT_PUBLIC_*`.
 
 ## Chạy local
 Yêu cầu Node.js >=20.9 và npm.
