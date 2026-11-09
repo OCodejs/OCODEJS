@@ -27,7 +27,7 @@ export function verifySessionToken(token?:string,now=Date.now()){
   try{
     if(!safeEqual(sign(payload),signature))return false;
     const data=JSON.parse(Buffer.from(payload,"base64url").toString()) as {sub?:string;exp?:number};
-    return typeof data.sub==="string"&&/^(github|google|discord):[^:]+$/.test(data.sub)&&typeof data.exp==="number"&&data.exp>now;
+    return typeof data.sub==="string"&&/^(github|google|discord|custom):[^:]+$/.test(data.sub)&&typeof data.exp==="number"&&data.exp>now;
   }catch{return false;}
 }
 export function getSessionLogin(token?:string,now=Date.now()){
