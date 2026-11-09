@@ -38,6 +38,7 @@ dialog{width:min(560px,calc(100% - 28px));max-height:85vh;padding:0;border:1px s
  <div class="tabs" role="group" aria-label="Lọc theo nhóm">
   <button class="tab" data-category="all" aria-pressed="true">Tất cả</button><button class="tab" data-category="Skills" aria-pressed="false">Skills</button><button class="tab" data-category="MCP" aria-pressed="false">MCP tools</button><button class="tab" data-category="Integration" aria-pressed="false">Integrations</button><button class="tab" data-category="Template" aria-pressed="false">Templates</button><button class="tab" data-category="installed" aria-pressed="false">Đã thêm</button>
  </div>
+ <p id="storageStatus" class="notice" role="status" aria-live="polite" hidden></p>
  <div class="resultline"><span id="resultCount" aria-live="polite">8 mục trong danh mục</span><span>Danh mục mẫu · kiểm tra nguồn trước khi dùng</span></div>
  <div class="grid" id="pluginGrid"></div><div class="empty" id="empty"><strong>Không tìm thấy plugin phù hợp</strong>Thử từ khóa khác hoặc bỏ bớt bộ lọc.</div>
 </section>
@@ -49,28 +50,23 @@ dialog{width:min(560px,calc(100% - 28px));max-height:85vh;padding:0;border:1px s
 </main>
 <footer><div class="wrap foot"><span>OCode.js · Plugin Hub · Early preview</span><a href="https://github.com/OCodejs/OCodejs" target="_blank" rel="noopener noreferrer">Open-source repository ↗</a></div></footer>
 <dialog id="details"><div class="modalhead"><div><span class="eyebrow" id="modalType">PLUGIN</span><h2 id="modalTitle" style="margin-top:10px">Plugin detail</h2></div><button class="close" id="closeModal" aria-label="Đóng">×</button></div><div class="modalbody"><p id="modalDescription"></p><h3>Hướng dẫn bắt đầu</h3><ol id="modalSteps"></ol><h3>Ghi chú</h3><p id="modalNote"></p><pre id="modalCommand"></pre><button class="btn primary" id="modalInstall">Thêm vào workspace</button></div></dialog>
-<script>
+<script type="module">
+import { PLUGIN_CATALOG as plugins, filterPlugins, readInstalled, writeInstalled, toggleSelection } from "./plugin-hub.js";
 (() => {
- const plugins = [
-  {id:"skill-code-review",name:"Code Review Assistant",type:"Skills",icon:"⌘",tagline:"Checklist và quy trình review thay đổi mã nguồn.",description:"Skill mẫu hướng dẫn agent đọc diff, kiểm tra lỗi logic, rủi ro bảo mật, khả năng bảo trì và viết nhận xét có dẫn chứng.",tags:["Code quality","Review","Git"],version:"Sample",command:"npx skills add <owner/repo>",steps:["Xác định repository nguồn và kiểm tra tác giả.","Đọc SKILL.md cùng mọi script đi kèm.","Cài vào agent hỗ trợ Skills theo hướng dẫn của nguồn."],note:"Tên và lệnh minh họa; thay bằng repository đã được xác minh."},
-  {id:"skill-frontend",name:"Frontend Design Workflow",type:"Skills",icon:"✳",tagline:"Quy trình thiết kế giao diện responsive và accessible.",description:"Skill mẫu cho các tác vụ lập kế hoạch UI, thiết kế component, responsive layout và kiểm tra accessibility.",tags:["Frontend","UI/UX","Accessibility"],version:"Sample",command:"npx skills add <owner/repo>",steps:["Kiểm tra nền tảng agent có hỗ trợ Skills.","Xem nội dung hướng dẫn và script trước khi cài.","Thêm skill theo lệnh chính thức của repository."],note:"Không đại diện cho một package đã được kiểm thử hoặc phát hành."},
-  {id:"skill-testing",name:"Testing & TDD Coach",type:"Skills",icon:"✓",tagline:"Lập kế hoạch test, viết test trước và kiểm tra edge cases.",description:"Skill mẫu giúp agent đề xuất test cases, tái hiện lỗi, áp dụng TDD và rà soát độ bao phủ.",tags:["Testing","TDD","Quality"],version:"Sample",command:"npx skills add <owner/repo>",steps:["Xác minh repo và giấy phép.","Đọc hướng dẫn cài đặt dành cho agent của bạn.","Chạy thử trong nhánh riêng và review thay đổi."],note:"Cần thay placeholder bằng nguồn chính thức."},
-  {id:"mcp-browser",name:"Browser Automation MCP",type:"MCP",icon:"◎",tagline:"Cung cấp browser tools cho workflow tự động hóa.",description:"Mẫu tích hợp MCP server cho các thao tác trình duyệt có kiểm soát như điều hướng, đọc trang và thao tác form.",tags:["Browser","Automation","MCP"],version:"Blueprint",command:"Add the verified MCP server command to your client configuration.",steps:["Chọn MCP server và xác minh publisher.","Đọc danh sách tools, quyền truy cập và network behavior.","Thêm cấu hình server vào client MCP; không chia sẻ secrets trong file công khai."],note:"Chưa kết nối server thật trong bản preview này."},
-  {id:"mcp-github",name:"GitHub Workflow MCP",type:"MCP",icon:"⑂",tagline:"Kết nối issue, pull request và quy trình repository.",description:"Blueprint MCP cho phép agent làm việc với GitHub theo quyền tối thiểu, có thể giới hạn theo repository.",tags:["GitHub","Developer tools","MCP"],version:"Blueprint",command:"Configure a trusted GitHub MCP server with least-privilege access.",steps:["Xác minh mã nguồn server và quyền OAuth/PAT cần thiết.","Chỉ cấp quyền trên repository cần thao tác.","Kiểm tra thao tác ghi trước khi cho phép chạy tự động."],note:"Không tự động cấp quyền hoặc tạo token."},
-  {id:"integration-openai",name:"ChatGPT & Codex Connector",type:"Integration",icon:"◈",tagline:"Khung tích hợp tool, Skills và MCP cho agent.",description:"Mẫu kiến trúc để lập kế hoạch use case, định nghĩa tools, xác thực, bảo vệ dữ liệu và kiểm thử workflow.",tags:["ChatGPT","Codex","API"],version:"Guide",command:"See docs/OPENAI-PLUGIN-DEVELOPMENT.md",steps:["Mô tả use case và dữ liệu cần truy cập.","Thiết kế tool schema và xác thực phía server.","Kiểm thử quyền, lỗi, privacy và giao diện tùy chọn."],note:"Đây là hướng dẫn kiến trúc, không phải plugin cài một chạm."},
-  {id:"template-mcp",name:"MCP Server Starter",type:"Template",icon:"⌘",tagline:"Bộ khung khởi tạo MCP server có cấu trúc rõ ràng.",description:"Template tham khảo cho manifest, tool definitions, input validation, error handling và hướng dẫn chạy local.",tags:["Starter","TypeScript","MCP"],version:"Template",command:"Create a server project from a reviewed starter repository.",steps:["Chọn SDK MCP chính thức phù hợp runtime.","Tạo tool schema rõ ràng và validate mọi input.","Viết test cho success, failure và quyền truy cập."],note:"Chưa có template repository được liên kết trong catalog."},
-  {id:"template-plugin",name:"Plugin Manifest Template",type:"Template",icon:"▤",tagline:"Mẫu metadata và tài liệu cho catalog plugin.",description:"Template dữ liệu để mô tả tên, phiên bản, publisher, quyền, nền tảng hỗ trợ, hướng dẫn và changelog.",tags:["Manifest","Registry","Docs"],version:"Template",command:"Create a manifest using the schema agreed by your plugin registry.",steps:["Chuẩn hóa schema manifest và versioning.","Bắt buộc publisher, source URL, permissions và compatibility.","Xác thực manifest trong CI trước khi publish."],note:"Schema manifest chính thức cần được thiết kế cùng backend registry."}
- ];
+
  const $=id=>document.getElementById(id);
  const storageKey="ocode-plugin-hub-installed-v1";
- let installed=new Set();try{installed=new Set(JSON.parse(localStorage.getItem(storageKey)||"[]"))}catch{}
+ const validIds=plugins.map(p=>p.id);
+ let storage=null;try{storage=window.localStorage}catch{}
+ const initial=readInstalled(storage,storageKey,validIds);
+ let installed=initial.installed;
  let category="all",activePlugin=null;
- const persist=()=>{try{localStorage.setItem(storageKey,JSON.stringify([...installed]))}catch{}};
+ const status=(message)=>{const el=$("storageStatus");if(el){el.textContent=message;el.hidden=!message}};
+ if(!initial.ok)status("Không thể đọc lựa chọn đã lưu. Trình duyệt có thể đang chặn bộ nhớ cục bộ.");
+ const persist=(next)=>writeInstalled(storage,storageKey,next);
  const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
  function render(){
-  const query=$("search").value.trim().toLowerCase(),sort=$("sort").value;
-  let list=plugins.filter(p=>(category==="all"||category==="installed"||p.type===category)&&(category!=="installed"||installed.has(p.id))&&(!query||[p.name,p.type,p.tagline,p.description,...p.tags].join(" ").toLowerCase().includes(query)));
-  if(sort==="name")list.sort((a,b)=>a.name.localeCompare(b.name));if(sort==="type")list.sort((a,b)=>a.type.localeCompare(b.type)||a.name.localeCompare(b.name));
+  const list=filterPlugins(plugins,{query:$("search").value,category,installed,sort:$("sort").value});
   $("pluginGrid").innerHTML=list.map(p=>{const yes=installed.has(p.id);return `<article class="card"><div class="cardtop"><span class="glyph" aria-hidden="true">${esc(p.icon)}</span><span class="tag">${esc(p.type)}</span></div><h2>${esc(p.name)}</h2><p>${esc(p.tagline)}</p><div class="meta">${p.tags.map(t=>`<span>${esc(t)}</span>`).join("")}</div><div class="cardfoot"><button class="btn" data-detail="${p.id}">Chi tiết</button><button class="btn ${yes?"installed":"primary"}" data-install="${p.id}">${yes?"✓ Đã thêm":"＋ Thêm"}</button></div></article>`}).join("");
   $("empty").style.display=list.length?"none":"block";$("resultCount").textContent=list.length+" mục phù hợp";$("totalCount").textContent=plugins.length;$("installedCount").textContent=installed.size;renderInstalled();
  }
@@ -78,14 +74,23 @@ dialog{width:min(560px,calc(100% - 28px));max-height:85vh;padding:0;border:1px s
   const list=plugins.filter(p=>installed.has(p.id));$("manageSummary").textContent=list.length?list.length+" mục đã được thêm trên trình duyệt này.":"Chưa có mục nào. Hãy chọn plugin từ catalog.";
   $("installedList").innerHTML=list.map(p=>`<div class="installed-item"><span>${esc(p.name)}</span><button data-remove="${p.id}">Gỡ khỏi workspace</button></div>`).join("");
  }
- function toggle(id){if(installed.has(id))installed.delete(id);else installed.add(id);persist();render();if(activePlugin)showDetails(activePlugin)}
- function showDetails(id){const p=plugins.find(x=>x.id===id);if(!p)return;activePlugin=id;$("modalType").textContent=p.type;$("modalTitle").textContent=p.name;$("modalDescription").textContent=p.description;$("modalSteps").innerHTML=p.steps.map(s=>"<li>"+esc(s)+"</li>").join("");$("modalNote").textContent=p.note;$("modalCommand").textContent=p.command;$("modalInstall").textContent=installed.has(id)?"Gỡ khỏi workspace":"Thêm vào workspace";$("modalInstall").classList.toggle("installed",installed.has(id));$("details").showModal()}
+ function toggle(id){
+  const latest=readInstalled(storage,storageKey,validIds);
+  if(!latest.ok){status("Không thể lưu thay đổi. Hãy bật bộ nhớ trang web hoặc kiểm tra dung lượng trình duyệt.");return}
+  const next=toggleSelection(latest.installed,id);
+  const saved=persist(next);
+  if(!saved.ok){status("Không thể lưu thay đổi. Lựa chọn hiện tại chưa được lưu và sẽ không hiển thị là đã thêm.");return}
+  installed=next;status("");render();
+  if(activePlugin&&$("details").open)showDetails(activePlugin);
+ }
+ function showDetails(id){const p=plugins.find(x=>x.id===id);if(!p)return;activePlugin=id;$("modalType").textContent=p.type;$("modalTitle").textContent=p.name;$("modalDescription").textContent=p.description;$("modalSteps").innerHTML=p.steps.map(s=>"<li>"+esc(s)+"</li>").join("");$("modalNote").textContent=p.note;$("modalCommand").textContent=p.command;$("modalInstall").textContent=installed.has(id)?"Gỡ khỏi workspace":"Thêm vào workspace";$("modalInstall").classList.toggle("installed",installed.has(id));if(!$("details").open)$("details").showModal()}
  $("search").addEventListener("input",render);$("sort").addEventListener("change",render);
  document.querySelectorAll("[data-category]").forEach(b=>b.addEventListener("click",()=>{category=b.dataset.category;document.querySelectorAll("[data-category]").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));render()}));
  $("reset").addEventListener("click",()=>{$("search").value="";$("sort").value="featured";category="all";document.querySelectorAll("[data-category]").forEach(x=>x.setAttribute("aria-pressed",String(x.dataset.category==="all")));render()});
  $("pluginGrid").addEventListener("click",e=>{const d=e.target.closest("[data-detail]"),i=e.target.closest("[data-install]");if(d)showDetails(d.dataset.detail);if(i)toggle(i.dataset.install)});
  $("installedList").addEventListener("click",e=>{const b=e.target.closest("[data-remove]");if(b)toggle(b.dataset.remove)});
- $("modalInstall").addEventListener("click",()=>{if(activePlugin)toggle(activePlugin)});$("closeModal").addEventListener("click",()=>$("details").close());$("details").addEventListener("click",e=>{if(e.target===$("details"))$("details").close()});
+ $("modalInstall").addEventListener("click",()=>{if(activePlugin)toggle(activePlugin)});$("closeModal").addEventListener("click",()=>$("details").close());$("details").addEventListener("close",()=>{activePlugin=null});$("details").addEventListener("click",e=>{if(e.target===$("details"))$("details").close()});
+ window.addEventListener("storage",event=>{if(event.key===storageKey||event.key===null){const latest=readInstalled(storage,storageKey,validIds);if(latest.ok){installed=latest.installed;status("");render();if(activePlugin&&$("details").open)showDetails(activePlugin)}}});
  render();
 })();
 </script>
