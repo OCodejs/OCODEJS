@@ -9,6 +9,10 @@
 - Skills allowlist: `/status`, `/echo ...`, mặc định tạo kế hoạch. Runtime không có shell tùy ý, sửa repository hoặc deploy production.
 - Không có DATABASE_URL: demo trong bộ nhớ cùng process, mất dữ liệu khi restart; health trả 503 và worker không chạy. Không dùng chế độ này cho cloud.
 
+## OAuth Authorization Portal
+
+Mở `/authorize` để chọn GitHub, Google hoặc Discord. Đăng ký callback URL tương ứng: `APP_ORIGIN/api/auth/callback/github`, `APP_ORIGIN/api/auth/callback/google`, `APP_ORIGIN/api/auth/callback/discord`. Cấu hình client ID/secret và allowlist riêng (`GITHUB_ALLOWED_USERS`, `GOOGLE_ALLOWED_USERS`, `DISCORD_ALLOWED_USERS`) trong environment của server. Google allowlist dùng email đã xác minh; GitHub/Discord dùng username. Không đặt client secret trong biến `NEXT_PUBLIC_*`.
+
 ## Chạy local
 Yêu cầu Node.js >=20.9 và npm.
 ```sh
