@@ -1,10 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { readFile } from "node:fs/promises";
 import { PLUGIN_CATALOG, filterPlugins, readInstalled, toggleSelection, writeInstalled } from "../plugin-hub.js";
-import { prepareSite } from "../scripts/prepare-site.mjs";
 
 const plugins = [
   { id: "a", name: "Alpha", type: "Skills", tagline: "Code review", description: "Review changes", tags: ["git"] },
@@ -77,4 +74,5 @@ test("plugin detail dialog closes cleanly and does not reopen after selection ch
   assert.match(html, /<dialog id="details"/);
   assert.match(html, /addEventListener\("close",\(\)=>\{activePlugin=null\}\)/);
   assert.match(html, /if\(activePlugin&&\$\("details"\)\.open\)showDetails\(activePlugin\)/);
+  assert.match(html, /if\(!\$\("details"\)\.open\)\$\("details"\)\.showModal\(\)/);
 });
