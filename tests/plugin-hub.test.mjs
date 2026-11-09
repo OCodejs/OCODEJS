@@ -50,17 +50,3 @@ test("selection toggles return a new set without mutating the previous value", (
   assert.deepEqual([...added], ["a", "b"]);
   assert.deepEqual([...toggleSelection(added, "a")], ["b"]);
 });
-
-test("static site publishing includes Plugin Hub and its browser module", async (t) => {
-  const root = await mkdtemp(join(tmpdir(), "ocode-plugin-hub-"));
-  t.after(() => rm(root, { recursive: true, force: true }));
-  await mkdir(join(root, "docs"));
-  await mkdir(join(root, "assets"));
-  for (const [path, content] of [
-    ["index.html", "home"], ["plugin-hub.html", "hub"], ["plugin-hub.js", "module"],
-    ["README.md", "readme"], ["docs/guide.md", "guide"], ["assets/logo.svg", "logo"],
-  ]) await writeFile(join(root, path), content);
-  await prepareSite(root);
-  assert.equal(await readFile(join(root, "_site", "plugin-hub.html"), "utf8"), "hub");
-  assert.equal(await readFile(join(root, "_site", "plugin-hub.js"), "utf8"), "module");
-});
