@@ -20,3 +20,19 @@ export const sourceStateLabels = Object.freeze({
   stale: 'Dữ liệu cũ',
   unavailable: 'Không khả dụng',
 });
+
+
+export function resolveViewFromHash(hash, currentView = 'overview', allowedViews = []) {
+  const requested = String(hash || '').replace(/^#/, '');
+  if (requested === 'main-shell') {
+    return allowedViews.includes(currentView) ? currentView : 'overview';
+  }
+  return allowedViews.includes(requested) ? requested : 'overview';
+}
+
+export function isTimestampStale(timestamp, { now = Date.now(), maxAgeMs = 5 * 60 * 1000 } = {}) {
+  if (timestamp === null || timestamp === undefined || timestamp === '') return false;
+  const parsed = typeof timestamp === 'number' ? timestamp : Date.parse(timestamp);
+  if (!Number.isFinite(parsed)) return false;
+  return now - parsed >= maxAgeMs;
+}

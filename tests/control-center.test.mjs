@@ -73,3 +73,29 @@ test('workflow endpoint failure preserves verified repository metadata', async (
   assert.equal(result.workflows.state, 'unavailable');
   assert.equal(result.workflows.reason, 'not_found');
 });
+
+
+test('direct module URLs resolve to the requested view and unknown routes fall back safely', async () => {
+  const { resolveViewFromHash } = await import('../control-center/lib/state.js');
+  const views = ['overview', 'servers', 'monitoring', 'databases', 'security', 'sandboxes', 'alerts', 'github', 'deployments', 'agents', 'settings'];
+  assert.equal(resolveViewFromHash('#servers', 'overview', views), 'servers');
+  assert.equal(resolveViewFromHash('#github', 'overview', views), 'github');
+  assert.equal(resolveViewFromHash('#not-a-module', 'overview', views), 'overview');
+});
+
+test('skip navigation anchor preserves the active module instead of redirecting to overview', async () => {
+  const { resolveViewFromHash } = await import('../control-center/lib/state.js');
+  const views = ['overview', 'servers', 'monitoring', 'databases', 'security', 'sandboxes', 'alerts', 'github', 'deployments', 'agents', 'settings'];
+  assert.equal(resolveViewFromHash('#main-shell', 'github', views), 'github');
+  assert.equal(resolveViewFromHash('#main-shell', 'servers', views), 'servers');
+  assert.equal(resolveViewFromHash('#main-shell', 'invalid', views), 'overview');
+});
+
+test('GitHub data becomes stale after five minutes and remains fresh before the threshold', async () => {
+  const { isTimestampStale } = await import('../control-center/lib/state.js');
+  const now = Date.parse('2026-11-10T07:00:00.000Z');
+  assert.equal(isTimestampStale('2026-11-10T06:55:01.000Z', { now }), false);
+  assert.equal(isTimestampStale('2026-11-10T06:55:00.000Z', { now }), true);
+  assert.equal(isTimestampStale(null, { now }), false);
+  assert.equal(isTimestampStale('invalid-date', { now }), false);
+});
