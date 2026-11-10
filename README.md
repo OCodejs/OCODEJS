@@ -142,6 +142,8 @@ npm run build
 npm test
 ```
 
+Run only the homepage accessibility, local-link, and SEO regression tests with `npm run test:homepage`.
+
 Generate a coverage report:
 
 ```bash

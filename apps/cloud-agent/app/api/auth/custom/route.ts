@@ -1,0 +1,4 @@
+import {NextResponse} from "next/server";
+import {customAuthorizationUrl,customOAuthConfigured,customOAuthCookieOptions,customOAuthStateCookie,customOAuthVerifierCookie,createCustomOAuthState,createPkceVerifier} from "@/lib/custom-oauth";
+export const runtime="nodejs";
+export async function GET(request:Request){if(!customOAuthConfigured()||!process.env.SESSION_SECRET||process.env.SESSION_SECRET.length<32)return NextResponse.redirect(new URL("/authorize?error=setup",request.url));try{const state=createCustomOAuthState(),verifier=createPkceVerifier(),response=NextResponse.redirect(customAuthorizationUrl(state,verifier)),options=customOAuthCookieOptions();response.cookies.set(customOAuthStateCookie(),state,options);response.cookies.set(customOAuthVerifierCookie(),verifier,options);return response;}catch{return NextResponse.redirect(new URL("/authorize?error=setup",request.url));}}
