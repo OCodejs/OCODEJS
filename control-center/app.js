@@ -1,5 +1,5 @@
 import { fetchGitHubPublicStatus, GitHubPublicApiError } from './lib/github-public.js';
-import { formatMetric } from './lib/state.js';
+import { formatMetric, isTimestampStale, resolveViewFromHash } from './lib/state.js';
 
 const LABELS = {
   overview: 'Tổng quan',
@@ -18,10 +18,11 @@ const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
 let activeRequest = null;
 let lastGitHubStatus = null;
+let activeView = 'overview';
 
 function showView() {
-  const requested = (location.hash || '#overview').slice(1);
-  const key = Object.hasOwn(LABELS, requested) ? requested : 'overview';
+  const key = resolveViewFromHash(location.hash, activeView, Object.keys(LABELS));
+  activeView = key;
   $$('[data-view]').forEach((view) => { view.hidden = view.dataset.view !== key; });
   $$('[data-view-link]').forEach((link) => {
     if (link.dataset.viewLink === key) link.setAttribute('aria-current', 'page');
@@ -30,7 +31,11 @@ function showView() {
   $('#breadcrumb').textContent = LABELS[key];
   $('#sidebar').classList.remove('open');
   $('#menu-button').setAttribute('aria-expanded', 'false');
-  if (key === 'github' && !lastGitHubStatus && !activeRequest) void refreshGitHub();
+  if (key === 'github' && lastGitHubStatus && isTimestampStale(lastGitHubStatus.checkedAt)) {
+    setSourceState('stale', 'DỮ LIỆU CŨ');
+  } else if (key === 'github' && !lastGitHubStatus && !activeRequest) {
+    void refreshGitHub();
+  }
 }
 
 function displayTimestamp(value) {
@@ -219,9 +224,20 @@ document.addEventListener('keydown', (event) => {
   $('#menu-button').focus();
 });
 window.addEventListener('hashchange', showView);
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState !== 'visible' || activeRequest) return;
+  if (lastGitHubStatus && isTimestampStale(lastGitHubStatus.checkedAt)) {
+    setSourceState('stale', 'DỮ LIỆU CŨ');
+    void refreshGitHub();
+  }
+});
 $('#refresh-button').addEventListener('click', () => { void refreshGitHub(); });
 showView();
 void refreshGitHub();
 window.setInterval(() => {
-  if (document.visibilityState === 'visible' && !activeRequest) void refreshGitHub();
+  if (document.visibilityState !== 'visible' || activeRequest) return;
+  if (lastGitHubStatus && isTimestampStale(lastGitHubStatus.checkedAt)) {
+    setSourceState('stale', 'DỮ LIỆU CŨ');
+  }
+  void refreshGitHub();
 }, 5 * 60 * 1000);
