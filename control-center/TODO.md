@@ -16,7 +16,7 @@
 - [x] Phase này chỉ đọc: không triển khai/deploy, restart/stop, thay cấu hình, xóa dữ liệu, acknowledge/resolve alerts, tạo credential hoặc thực hiện hành động bảo mật.
 - [x] Không lưu credential/provider token trong frontend; nguồn chưa xác thực được gắn nhãn rõ thay vì báo Connected.
 - [x] Thay đổi nằm trên nhánh riêng `feat/control-center-live-observability`; không push trực tiếp vào `main`.
-- [ ] Sau khi kiểm tra xong, đẩy nhánh và mở Pull Request; không merge và không deploy.
+- [x] Đã đẩy nhánh và mở [Pull Request #40](https://github.com/OCodejs/OCodejs/pull/40); không merge và không deploy.
 
 ## Kiểm tra và ghi chú vận hành
 - [x] Thêm test cho hợp đồng empty-state/trạng thái và ánh xạ response GitHub; fixture chỉ dùng trong test, không xuất hiện như dữ liệu production.
