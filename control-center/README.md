@@ -1,38 +1,31 @@
 # OCode.js Control Center
 
-Standalone infrastructure operations dashboard foundation inside the OCode.js repository. The app is isolated under `control-center/`; the root utility package, exports, tests and release workflow are unchanged.
+Standalone Control Center foundation in the OCode.js repository. `control-center/` is a static, read-only UI; it does not change the root OCode.js package, dependencies, exports, or release workflow.
 
-## Modules
-- Server Management: host inventory and CPU, RAM, disk, network telemetry.
-- Live Monitoring: timestamped metrics, history and collection health.
-- Database Monitoring: PostgreSQL, MySQL and Redis health/performance.
-- Security Monitoring: audit events, authentication and access changes.
-- Sandbox Management: isolated code execution lifecycle and resource limits.
-- Alert Center: severity, acknowledgement, resolution and escalation.
-- GitHub & CI/CD: repositories, workflow runs and checks.
-- Deployments: Vercel, Netlify and Cloudflare.
-- AI Agents: runs, tool permissions and execution audit.
+## Current data connections
 
-## Current status
-This increment is a responsive static UI foundation with navigation and explicit no-data states. It does **not** claim that external providers, server telemetry, database monitoring, alerts or agent orchestration are connected. No fabricated metrics are shown. The browser UI does not request or store credentials.
+The GitHub & CI/CD view reads public repository metadata and the latest GitHub Actions runs for `OCodejs/OCodejs` from GitHub's public REST API. Requests use `GET` only, omit credentials, are limited to this fixed public repository, and refresh no more often than every five minutes while the page is visible. No GitHub token, OAuth credential, or private repository access is used. Public API rate limits and network failures are shown as unavailable rather than replaced with demo values.
 
-## Target architecture
-1. UI: this directory; presentation only.
-2. API: authenticated server-side API deployed separately.
-3. Identity: OAuth/OIDC, secure session cookies, CSRF protection and workspace RBAC.
-4. Secrets: provider credentials in a server-side secret manager or encrypted database; never in source, browser storage, query strings or logs.
-5. Connectors: GitHub App (preferred), Vercel, Netlify, Cloudflare, database exporters and a signed host agent.
-6. Telemetry: authenticated ingestion, schema validation, timestamps, retention and rate limits.
-7. Alerts: deduplication, severity, acknowledgement, escalation and notification adapters.
-8. Audit: append-only records for credential changes, user actions and privileged operations.
+Vercel, Netlify, Cloudflare, database metrics, host/container telemetry, Sandbox lifecycle, security events, alerts, and AI-agent runs are not connected in this phase. The UI shows “Chưa kết nối” or “Chưa có dữ liệu”; a missing value is `—`, not zero. A measured zero is shown only when a connected source returns that actual value. GitHub Actions status describes CI, not live host CPU/RAM telemetry.
 
-## Security requirements
-- Least-privilege OAuth scopes and short-lived tokens where supported.
-- Encrypt secrets at rest and redact credentials from logs and errors.
-- Enforce workspace RBAC and server-side authorization on every connector route.
-- Verify webhook signatures and prevent replay.
-- Require explicit confirmation for destructive operations and production changes.
-- Isolate sandbox workloads with strict CPU, memory, filesystem, network and time limits.
+The private owner-only Sandbox Status Dashboard is a separate project. Its telemetry, URLs, host identifiers, and credentials are not copied to this public repository.
 
-## Preview
-Serve this directory with any static HTTP server, or configure a separate hosting project with `control-center` as its root. No root package dependencies or hosting configuration are modified.
+## Security and action boundaries
+
+The current UI is read-only. It has no forms that accept secrets and no controls for deploying, restarting, changing configuration, deleting data, or acknowledging/resolving alerts. Provider credentials must not be placed in source, browser storage, URLs, or client-side requests. A future authenticated connector phase requires a server-side API, workspace authorization, least-privilege credentials held in a secret manager, audit and redaction before any provider is called.
+
+## Preview and tests
+
+Serve this directory with a static HTTP server, or configure a separate hosting project with `control-center/` as its root. The page has no runtime package dependency. Unit tests for data-state semantics and the public GitHub adapter are in `tests/control-center.test.mjs`; run them with `node --test tests/control-center.test.mjs`. The repository-wide command is `npm test`.
+
+## Sources
+
+- Repository source: https://github.com/OCodejs/OCodejs
+- Repository metadata endpoint: https://api.github.com/repos/OCodejs/OCodejs
+- Latest workflow runs endpoint: https://api.github.com/repos/OCodejs/OCodejs/actions/runs?per_page=5
+- Control Center foundation: https://github.com/OCodejs/OCodejs/pull/39
+
+The six UI areas also reserve explicit empty states for Docker/container inventory, API health checks, OAuth/Auth/security events, and error logs/automatic alerts. These remain unconnected; no production status is inferred from the static pages.
+
+
+HTTP 429 is treated as a rate limit. HTTP 403 is labeled rate-limited only when GitHub exposes `X-RateLimit-Remaining: 0` or `Retry-After`; otherwise it is reported as forbidden. The UI also includes keyboard focus states, a skip link, and Escape-to-close behavior for the mobile menu.
