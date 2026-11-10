@@ -2,17 +2,6 @@ name: Endor Labs
 
 on:
   workflow_dispatch:
-    inputs:
-      namespace:
-        description: Endor Labs tenant namespace
-        required: true
-        type: string
-
-permissions:
-  contents: read
-  security-events: write
-  actions: read
-  id-token: write
 
 jobs:
   scan:
