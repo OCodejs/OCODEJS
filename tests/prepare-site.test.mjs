@@ -10,6 +10,8 @@ test("static publish directory includes website files and removes stale output",
   try {
     const files = {
       "index.html": '<a href="docs/API.md">API</a>',
+      "plugin-hub.html": "<main>Plugin Hub</main>",
+      "plugin-hub.js": "export const pluginHub = true;",
       "README.md": "Readme",
       "docs/API.md": "API documentation",
       "assets/logo.svg": "<svg/>",

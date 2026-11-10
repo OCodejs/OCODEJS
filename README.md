@@ -10,12 +10,13 @@ A lightweight JavaScript / TypeScript utility toolkit for modern applications.
 
 <p>
   <a href="docs/API.md">API Reference</a> ·
-  <a href="#quick-start">Quick Start</a> ·
+  <a href="docs/quickstart.md">Quick Start</a> ·
+  <a href="docs/TERMINAL.md">Terminal Tasks</a> ·
   <a href="#tiếng-việt">Tiếng Việt</a> ·
-  <a href="https://github.com/Velclaw/OCodejs/issues">Issues</a>
+  <a href="https://github.com/OCodejs/OCodejs/issues">Issues</a>
 </p>
 
-[![CI](https://github.com/Velclaw/OCodejs/actions/workflows/ci.yml/badge.svg)](https://github.com/Velclaw/OCodejs/actions/workflows/ci.yml)
+[![CI](https://github.com/OCodejs/OCodejs/actions/workflows/ci.yml/badge.svg)](https://github.com/OCodejs/OCodejs/actions/workflows/ci.yml)
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D18-43853d?logo=node.js&logoColor=white)](https://nodejs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-4f8cff.svg)](LICENSE)
@@ -69,9 +70,9 @@ See the [complete API reference](docs/API.md) for function signatures and usage 
 The package has **not been published to npm yet**. To try the current source:
 
 ```bash
-git clone https://github.com/Velclaw/OCodejs.git
+git clone https://github.com/OCodejs/OCodejs.git
 cd OCodejs
-npm install
+npm ci
 npm test
 ```
 
@@ -136,10 +137,12 @@ See the [Next.js example](examples/nextjs/README.md).
 Run the build and test suite locally:
 
 ```bash
-npm install
+npm ci
 npm run build
 npm test
 ```
+
+Run only the homepage accessibility, local-link, and SEO regression tests with `npm run test:homepage`.
 
 Generate a coverage report:
 
@@ -147,7 +150,7 @@ Generate a coverage report:
 npm run test:coverage
 ```
 
-The project uses TypeScript in strict mode and Node.js's built-in test runner. GitHub Actions runs CI for repository changes.
+The project uses TypeScript in strict mode and Node.js's built-in test runner. GitHub Actions runs CI for repository changes. See the [Terminal Tasks guide](docs/TERMINAL.md) for local commands and the manual Terminal Task workflow.
 
 ## Roadmap
 
@@ -164,7 +167,7 @@ The project uses TypeScript in strict mode and Node.js's built-in test runner. G
 
 - Never commit API keys, access tokens, passwords, private keys, or production environment files.
 - Treat external input as untrusted and validate it at application boundaries.
-- Report security concerns through the repository's [Issues](https://github.com/Velclaw/OCodejs/issues) page without posting secrets or sensitive data.
+- Report security concerns through the repository's [Issues](https://github.com/OCodejs/OCodejs/issues) page without posting secrets or sensitive data.
 
 ## License
 
@@ -190,9 +193,9 @@ OCode.js là bộ tiện ích JavaScript/TypeScript gọn nhẹ, không có depe
 Hiện tại, package **chưa được phát hành lên npm**. Clone mã nguồn để chạy thử:
 
 ```bash
-git clone https://github.com/Velclaw/OCodejs.git
+git clone https://github.com/OCodejs/OCodejs.git
 cd OCodejs
-npm install
+npm ci
 npm test
 ```
 
@@ -205,10 +208,12 @@ OCode.js **không thay thế Next.js hoặc Vercel**; đây là thư viện ti�
 ### Tài liệu và phát triển
 
 - [Tài liệu API](docs/API.md)
+- [Terminal Tasks và quy trình phát triển](docs/TERMINAL.md)
+- [Hướng dẫn bắt đầu](docs/quickstart.md)
 - [Ví dụ Next.js](examples/nextjs/README.md)
-- [Báo lỗi / đề xuất](https://github.com/Velclaw/OCodejs/issues)
+- [Báo lỗi / đề xuất](https://github.com/OCodejs/OCodejs/issues)
 
-Yêu cầu Node.js 18+. Chạy `npm install`, sau đó `npm test` để build TypeScript và thực thi bộ kiểm thử.
+Yêu cầu Node.js 18+. Chạy `npm ci`, sau đó `npm test` để build TypeScript và thực thi bộ kiểm thử.
 
 ### Lộ trình
 
