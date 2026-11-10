@@ -89,6 +89,7 @@ test('skip navigation anchor preserves the active module instead of redirecting 
   assert.equal(resolveViewFromHash('#main-shell', 'github', views), 'github');
   assert.equal(resolveViewFromHash('#main-shell', 'servers', views), 'servers');
   assert.equal(resolveViewFromHash('#main-shell', 'invalid', views), 'overview');
+  assert.equal(resolveViewFromHash('', 'servers', views), 'overview');
 });
 
 test('GitHub data becomes stale after five minutes and remains fresh before the threshold', async () => {
