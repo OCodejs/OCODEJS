@@ -24,7 +24,7 @@ export const sourceStateLabels = Object.freeze({
 
 export function resolveViewFromHash(hash, currentView = 'overview', allowedViews = []) {
   const requested = String(hash || '').replace(/^#/, '');
-  if (!requested || requested === 'main-shell') {
+  if (requested === 'main-shell') {
     return allowedViews.includes(currentView) ? currentView : 'overview';
   }
   return allowedViews.includes(requested) ? requested : 'overview';
