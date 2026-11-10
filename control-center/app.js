@@ -19,6 +19,7 @@ const $$ = (selector) => [...document.querySelectorAll(selector)];
 let activeRequest = null;
 let lastGitHubStatus = null;
 let activeView = 'overview';
+let freshnessTimer = null;
 
 function showView() {
   const key = resolveViewFromHash(location.hash, activeView, Object.keys(LABELS));
@@ -36,6 +37,22 @@ function showView() {
   } else if (key === 'github' && !lastGitHubStatus && !activeRequest) {
     void refreshGitHub();
   }
+}
+
+function scheduleGitHubFreshnessCheck() {
+  window.clearTimeout(freshnessTimer);
+  if (!lastGitHubStatus?.checkedAt) return;
+  const checkedAt = Date.parse(lastGitHubStatus.checkedAt);
+  if (!Number.isFinite(checkedAt)) return;
+  const remainingMs = checkedAt + 5 * 60 * 1000 - Date.now();
+  freshnessTimer = window.setTimeout(() => {
+    if (!lastGitHubStatus || !isTimestampStale(lastGitHubStatus.checkedAt)) {
+      scheduleGitHubFreshnessCheck();
+      return;
+    }
+    setSourceState('stale', 'DỮ LIỆU CŨ');
+    if (document.visibilityState === 'visible' && !activeRequest) void refreshGitHub();
+  }, Math.max(0, remainingMs));
 }
 
 function displayTimestamp(value) {
@@ -195,6 +212,7 @@ async function refreshGitHub() {
     try {
       const result = await fetchGitHubPublicStatus();
       lastGitHubStatus = result;
+      scheduleGitHubFreshnessCheck();
       renderRepository(result.repository);
       renderWorkflows(result.workflows);
       setSourceState('connected', 'ĐÃ KẾT NỐI · READ-ONLY');
@@ -225,11 +243,13 @@ document.addEventListener('keydown', (event) => {
 });
 window.addEventListener('hashchange', showView);
 document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState !== 'visible' || activeRequest) return;
-  if (lastGitHubStatus && isTimestampStale(lastGitHubStatus.checkedAt)) {
+  if (document.visibilityState !== 'visible' || activeRequest || !lastGitHubStatus) return;
+  if (isTimestampStale(lastGitHubStatus.checkedAt)) {
     setSourceState('stale', 'DỮ LIỆU CŨ');
     void refreshGitHub();
+    return;
   }
+  scheduleGitHubFreshnessCheck();
 });
 $('#refresh-button').addEventListener('click', () => { void refreshGitHub(); });
 showView();
