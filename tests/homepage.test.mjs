@@ -1,12 +1,14 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { existsSync, readFileSync, statSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 const html = readFileSync(resolve(root, "index.html"), "utf8");
 const body = html.match(/<body\b[^>]*>([\s\S]*?)<\/body>/i)?.[1] ?? "";
+const EXPECTED_CANONICAL_URL = "https://www.ocodejs.dev/";
+const EXPECTED_CANONICAL_ORIGIN = new URL(EXPECTED_CANONICAL_URL).origin;
 
 function attributes(markup) {
   return Object.fromEntries([...markup.matchAll(/([\w:-]+)\s*=\s*(?:"([^"]*)"|'([^']*)')/g)]
@@ -67,12 +69,17 @@ test("all fragment links resolve and all links have accessible names and safe sc
 });
 
 test("local documentation and project assets referenced by the homepage exist", () => {
+  // Keep filesystem paths in a fixed allowlist; never resolve href values as paths.
+  const localTargets = ["infra/", "docs/logo/README.md", "docs/OPENAI-PLUGIN-DEVELOPMENT.md", "plugin-hub.html"];
   for (const link of elements("a")) {
     const href = link.attributes.href;
-    if (href.startsWith("#") || /^[a-z][\w+.-]*:/i.test(href)) continue;
-    const pathname = decodeURIComponent(href.split(/[?#]/, 1)[0]);
-    const target = resolve(root, pathname);
-    assert.ok(existsSync(target), `Missing local link target: ${href}`);
+    if (href.startsWith("#")) continue;
+    const url = new URL(href, EXPECTED_CANONICAL_URL);
+    if (url.origin !== EXPECTED_CANONICAL_ORIGIN) continue;
+    assert.ok(localTargets.includes(href), "Add the local link to the checked target list: " + href);
+  }
+  for (const target of localTargets) {
+    assert.ok(existsSync(resolve(root, target)), "Missing local link target: " + target);
   }
   for (const image of [...body.matchAll(/<img\b([^>]*)>/gi)]) {
     const attrs = attributes(image[1]);
@@ -80,9 +87,38 @@ test("local documentation and project assets referenced by the homepage exist", 
   }
 });
 
+function isCanonicalRepositoryUrl(value) {
+  try {
+    const url = new URL(value);
+    return url.protocol === "https:"
+      && url.hostname === "github.com"
+      && url.username === ""
+      && url.password === ""
+      && url.port === ""
+      && url.pathname.replace(/\/+$/, "") === "/OCodejs/OCodejs";
+  } catch {
+    return false;
+  }
+}
+
 test("all source repository links point to the canonical OCodejs repository", () => {
-  const repositoryLinks = elements("a").filter((link) => link.attributes.href?.includes("github.com/"));
-  assert.ok(repositoryLinks.some((link) => link.attributes.href === "https://github.com/OCodejs/OCodejs"));
+  assert.ok(elements("a").some((link) => isCanonicalRepositoryUrl(link.attributes.href)));
+});
+
+test("repository URL validation rejects lookalike hosts and embedded hostnames", () => {
+  const maliciousUrls = [
+    "https://evil.example/github.com/OCodejs/OCodejs",
+    "https://github.com.evil.example/OCodejs/OCodejs",
+    "https://evilgithub.com/OCodejs/OCodejs",
+    "https://github.com@evil.example/OCodejs/OCodejs",
+    "http://github.com/OCodejs/OCodejs",
+    "https://github.com/OCodejs/OCodejs.evil.example",
+  ];
+
+  for (const value of maliciousUrls) {
+    assert.equal(isCanonicalRepositoryUrl(value), false, `Rejected unsafe repository URL: ${value}`);
+  }
+  assert.equal(isCanonicalRepositoryUrl("https://github.com/OCodejs/OCodejs"), true);
 });
 
 test("homepage styles are present, dark-themed and responsive", () => {
@@ -102,4 +138,25 @@ test("chat assistant is initially hidden and has explicit accessible controls", 
   assert.equal(attributes(panel[1])["aria-hidden"], "true");
   assert.equal(attributes(launcher[1])["aria-expanded"], "false");
   assert.ok(attributes(launcher[1])["aria-controls"] === "ocode-chat-panel");
+});
+
+
+test("SEO metadata, robots policy, sitemap and favicon match the canonical domain", () => {
+  const canonical = [...html.matchAll(/<link\b([^>]*)>/gi)]
+    .map((match) => attributes(match[1]))
+    .find((entry) => entry.rel?.toLowerCase() === "canonical")?.href;
+  assert.equal(canonical, EXPECTED_CANONICAL_URL);
+  for (const property of ["og:type", "og:site_name", "og:title", "og:description", "og:url", "og:image"]) {
+    assert.ok(html.includes(`property="${property}"`), `Missing ${property}`);
+  }
+  const openGraphUrl = [...html.matchAll(/<meta\b([^>]*)>/gi)]
+    .map((match) => attributes(match[1]))
+    .find((entry) => entry.property === "og:url")?.content;
+  assert.equal(openGraphUrl, EXPECTED_CANONICAL_URL, "Open Graph URL must match the canonical URL");
+  assert.ok(existsSync(resolve(root, "robots.txt")));
+  assert.ok(existsSync(resolve(root, "sitemap.xml")));
+  assert.ok(existsSync(resolve(root, "favicon.svg")));
+  const sitemapUrl = new URL("/sitemap.xml", EXPECTED_CANONICAL_URL).href;
+  assert.ok(readFileSync(resolve(root, "robots.txt"), "utf8").includes(`Sitemap: ${sitemapUrl}`));
+  assert.ok(readFileSync(resolve(root, "sitemap.xml"), "utf8").includes(`<loc>${EXPECTED_CANONICAL_URL}</loc>`));
 });

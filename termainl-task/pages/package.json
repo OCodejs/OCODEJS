@@ -1,0 +1,10 @@
+{
+  "name": "ocodejs-interactive-cli",
+  "version": "0.8.4",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node server.mjs",
+    "start": "node server.mjs"
+  }
+}
