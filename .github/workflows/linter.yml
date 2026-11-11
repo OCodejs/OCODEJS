@@ -1,0 +1,41 @@
+Please address the comments from this code review:
+
+## Individual Comments
+
+### Comment 1
+<location path=".github/workflows/super-linter.yml" line_range="25" />
+<code_context>
++          fetch-depth: 0
++
++      - name: Lint Code Base
++        uses: github/super-linter@v4
++        env:
++          VALIDATE_ALL_CODEBASE: false
+</code_context>
+<issue_to_address>
+**Mutable linter reference exposes token**
+
+When the upstream `v4` tag is moved or compromised, gitHub resolves `@v4` to the changed action code, which runs with `secrets.GITHUB_TOKEN` in its environment and can exfiltrate the token or exercise its granted permissions.
+
+Pin Super-Linter to a reviewed full commit SHA and explicitly grant only the token permissions it needs.
+</issue_to_address>
+
+### Comment 2
+<location path=".github/workflows/super-linter.yml" line_range="25-29" />
+<code_context>
++          fetch-depth: 0
++
++      - name: Lint Code Base
++        uses: github/super-linter@v4
++        env:
++          VALIDATE_ALL_CODEBASE: false
++          DEFAULT_BRANCH: "main"
++          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+</code_context>
+<issue_to_address>
+**Workflow has no regression tests**
+
+No test is added or updated for this workflow, so the repository has no test coverage for its triggers or Super-Linter configuration and regressions in the new behavior go undetected.
+
+Add a test or workflow-validation check that verifies the new workflow's triggers and configuration.
+</issue_to_address>
