@@ -25,9 +25,23 @@ test("manual Endor Labs workflow runs a scan and uploads SARIF only when present
   const workflow = read(".github/workflows/endorlabs.yml");
   assert.match(workflow, /^on:\s*\n\s+workflow_dispatch:/m);
   assert.match(workflow, /namespace:\s*\n\s+description:/);
+  assert.match(workflow, /default:\s*OCodejs/);
   assert.match(workflow, /uses:\s*endorlabs\/github-action@/);
   assert.doesNotMatch(workflow, /if:\s*github\.event_name\s*==\s*'(?:push|pull_request)'/);
   assert.match(workflow, /if:\s*always\(\)\s*&&\s*hashFiles\('findings\.sarif'\)\s*!=\s*''/);
+});
+
+test("workflow validation parses GitHub Actions YAML without scanning vendored docs", () => {
+  const workflow = read(".github/workflows/super-linter.yml");
+  assert.ok(workflow.includes("YAML.parse_file"), "Every workflow YAML file must be parsed");
+  assert.ok(workflow.includes(".github/workflows/*.{yml,yaml}"));
+  assert.ok(workflow.includes("ruby -"));
+});
+
+test("manual greeting workflow has one well-formed workflow_dispatch input map", () => {
+  const workflow = read(".github/workflows/manual.yml");
+  assert.match(workflow, /^on:\s*\n\s+workflow_dispatch:\s*\n\s+inputs:/m);
+  assert.equal((workflow.match(/^    inputs:$/gm) || []).length, 1);
 });
 
 test("manual dependency review receives explicit base and head revisions", () => {
