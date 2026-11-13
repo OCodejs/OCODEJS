@@ -32,7 +32,7 @@ test("manual Endor Labs workflow runs a scan and uploads SARIF only when present
 });
 
 test("workflow validation parses GitHub Actions YAML without scanning vendored docs", () => {
-  const workflow = read(".github/workflows/workflow-validation.yml");
+  const workflow = read(".github/workflows/super-linter.yml");
   assert.ok(workflow.includes("YAML.parse_file"), "Every workflow YAML file must be parsed");
   assert.ok(workflow.includes(".github/workflows/*.{yml,yaml}"));
   assert.ok(workflow.includes("ruby -"));
