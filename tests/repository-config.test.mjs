@@ -31,12 +31,11 @@ test("manual Endor Labs workflow runs a scan and uploads SARIF only when present
   assert.match(workflow, /if:\s*always\(\)\s*&&\s*hashFiles\('findings\.sarif'\)\s*!=\s*''/);
 });
 
-test("Super-Linter is pinned, least-privilege, and skips vendored upstream docs", () => {
-  const workflow = read(".github/workflows/super-linter.yml");
-  assert.ok(workflow.includes("statuses: write"), "Super-Linter needs explicit commit-status permission");
-  assert.ok(workflow.includes("github/super-linter@b807e99ddd37e444d189cfd2c2ca1274d8ae8ef1"));
-  assert.ok(workflow.includes("FILTER_REGEX_EXCLUDE:"));
-  assert.ok(workflow.includes("docs/content/"), "Vendored upstream documentation must not fail first-party lint");
+test("workflow validation parses GitHub Actions YAML without scanning vendored docs", () => {
+  const workflow = read(".github/workflows/workflow-validation.yml");
+  assert.ok(workflow.includes("YAML.parse_file"), "Every workflow YAML file must be parsed");
+  assert.ok(workflow.includes(".github/workflows/*.{yml,yaml}"));
+  assert.ok(workflow.includes("ruby -"));
 });
 
 test("manual greeting workflow has one well-formed workflow_dispatch input map", () => {
