@@ -7,7 +7,7 @@ export async function prepareSite(root) {
   await rm(output, { recursive: true, force: true });
   await mkdir(output, { recursive: true });
 
-  for (const path of ["index.html", "README.md", "docs", "assets"]) {
+  for (const path of ["index.html", "plugin-hub.html", "plugin-hub.js", "README.md", "docs", "assets"]) {
     await cp(join(root, path), join(output, path), { recursive: true });
   }
 

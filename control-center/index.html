@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#080b12">
+    <meta name="description" content="OCode.js Control Center — bảng quan sát hạ tầng theo dữ liệu thật, read-only.">
+    <title>OCode.js Control Center</title>
+    <link rel="stylesheet" href="./styles.css">
+    <script type="module" src="./app.js"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-shell">Bỏ qua điều hướng</a>
+    <aside class="sidebar" id="sidebar" aria-label="Điều hướng Control Center">
+      <a class="brand" href="#overview" aria-label="OCode.js Control Center">
+        <span class="brand-mark" aria-hidden="true">O</span>
+        <span><strong>OCode.js</strong><small>CONTROL CENTER</small></span>
+      </a>
+      <p class="nav-label">WORKSPACE</p>
+      <nav class="nav-list" aria-label="Các module">
+        <a href="#overview" data-view-link="overview">Tổng quan</a>
+        <a href="#servers" data-view-link="servers">Server Management</a>
+        <a href="#monitoring" data-view-link="monitoring">Live Monitoring</a>
+        <a href="#databases" data-view-link="databases">Database Monitoring</a>
+        <a href="#security" data-view-link="security">Security Monitoring</a>
+        <a href="#sandboxes" data-view-link="sandboxes">Sandbox Management</a>
+        <a href="#alerts" data-view-link="alerts">Alert Center</a>
+      </nav>
+      <p class="nav-label">KẾT NỐI</p>
+      <nav class="nav-list" aria-label="Tích hợp">
+        <a href="#github" data-view-link="github">GitHub &amp; CI/CD</a>
+        <a href="#deployments" data-view-link="deployments">Deployments</a>
+        <a href="#agents" data-view-link="agents">AI Agents</a>
+        <a href="#settings" data-view-link="settings">Kết nối &amp; cài đặt</a>
+      </nav>
+      <div class="sidebar-note">Read-only foundation<br>Không giữ token trong trình duyệt</div>
+    </aside>
+
+    <main class="main-shell" id="main-shell">
+      <header class="topbar">
+        <button class="icon-button menu-button" id="menu-button" type="button" aria-label="Mở điều hướng" aria-controls="sidebar" aria-expanded="false">☰</button>
+        <div class="breadcrumbs"><span>Workspace</span><span aria-hidden="true">/</span><strong id="breadcrumb">Tổng quan</strong></div>
+        <div class="topbar-actions">
+          <span class="mode-badge"><span class="status-dot" aria-hidden="true"></span> READ-ONLY</span>
+          <button class="button button-quiet" id="refresh-button" type="button">Làm mới GitHub</button>
+        </div>
+      </header>
+
+      <div class="content-wrap">
+        <section class="view" id="overview" data-view="overview" aria-labelledby="overview-title">
+          <div class="page-heading">
+            <div>
+              <p class="eyebrow">OPERATIONS / OVERVIEW</p>
+              <h1 id="overview-title">OCode.js Control Center</h1>
+              <p class="lede">Một nơi để quan sát GitHub, hạ tầng, dữ liệu và agent — chỉ khẳng định những gì nguồn thật xác nhận.</p>
+            </div>
+            <a class="button button-primary" href="#github">Xem GitHub &amp; CI/CD</a>
+          </div>
+
+          <div class="notice notice-info" role="status">
+            <span class="notice-icon" aria-hidden="true">i</span>
+            <div><strong id="overview-source-title">Đang tải trạng thái nguồn</strong><p id="overview-source-note">GitHub dùng API công khai chỉ đọc. Các nguồn hạ tầng khác chưa được nối.</p></div>
+            <span class="state-chip" id="overview-source-state">ĐANG TẢI</span>
+          </div>
+
+          <div class="summary-grid" aria-label="Trạng thái tổng quan">
+            <article class="summary-card">
+              <div class="card-topline"><span>SERVER / SANDBOX</span><span class="card-index">01</span></div>
+              <strong class="metric-value">—</strong>
+              <p>Chưa kết nối telemetry runtime</p>
+              <span class="state-text state-muted">Chưa có dữ liệu</span>
+            </article>
+            <article class="summary-card summary-card-accent">
+              <div class="card-topline"><span>GITHUB REPOSITORY</span><span class="card-index">02</span></div>
+              <strong class="metric-value" id="repo-branch">—</strong>
+              <p id="repo-name">Đang tải repository công khai</p>
+              <span class="state-text" id="repo-state">Đang kiểm tra nguồn</span>
+            </article>
+            <article class="summary-card">
+              <div class="card-topline"><span>DATABASES</span><span class="card-index">03</span></div>
+              <strong class="metric-value">—</strong>
+              <p>PostgreSQL · MySQL · Redis</p>
+              <span class="state-text state-muted">Chưa kết nối</span>
+            </article>
+            <article class="summary-card">
+              <div class="card-topline"><span>OPEN ALERTS</span><span class="card-index">04</span></div>
+              <strong class="metric-value">—</strong>
+              <p>Chưa có nguồn sự kiện</p>
+              <span class="state-text state-muted">Chưa xác định</span>
+            </article>
+          </div>
+
+          <div class="section-heading">
+            <div><p class="eyebrow">CONTROL PLANE</p><h2>Sáu khu vực vận hành</h2><p>Module chưa có adapter sẽ được đánh dấu rõ, không giả lập trạng thái.</p></div>
+            <span class="section-count">06 MODULES</span>
+          </div>
+          <div class="module-grid">
+            <a class="module-card" href="#servers"><span class="module-number">01</span><h3>Server Management</h3><p>Quản lý máy chủ, Docker containers, tài nguyên và trạng thái agent.</p><span class="module-status">Chưa kết nối nguồn</span></a>
+            <a class="module-card" href="#monitoring"><span class="module-number">02</span><h3>Live Monitoring</h3><p>Theo dõi tình trạng runtime và độ mới của telemetry.</p><span class="module-status">Chưa có telemetry</span></a>
+            <a class="module-card" href="#databases"><span class="module-number">03</span><h3>Database Monitoring</h3><p>Giám sát sức khỏe database và API health checks.</p><span class="module-status">Chưa kết nối nguồn</span></a>
+            <a class="module-card" href="#security"><span class="module-number">04</span><h3>Security Monitoring</h3><p>Theo dõi OAuth/Auth, sự kiện bảo mật và thay đổi quyền.</p><span class="module-status">Chưa có sự kiện</span></a>
+            <a class="module-card" href="#sandboxes"><span class="module-number">05</span><h3>Sandbox Management</h3><p>Quản lý môi trường chạy code và giới hạn tài nguyên.</p><span class="module-status">Chưa kết nối nguồn</span></a>
+            <a class="module-card" href="#alerts"><span class="module-number">06</span><h3>Alert Center</h3><p>Tập trung cảnh báo từ các nguồn đã xác minh.</p><span class="module-status">Chưa có nguồn cảnh báo</span></a>
+          </div>
+
+          <div class="section-heading section-heading-compact"><div><p class="eyebrow">PROVIDERS</p><h2>Tích hợp dịch vụ</h2></div><span class="section-count">PUBLIC READ-ONLY</span></div>
+          <div class="provider-grid">
+            <a class="provider-card" href="#github"><strong>GitHub</strong><span>Public API · read-only</span><small id="github-provider-status">Đang kiểm tra</small><small>CI: <span id="latest-ci">—</span></small></a>
+            <a class="provider-card" href="#deployments"><strong>Vercel</strong><span>Projects · deployments</span><small>Chưa kết nối</small></a>
+            <a class="provider-card" href="#deployments"><strong>Netlify</strong><span>Sites · builds</span><small>Chưa kết nối</small></a>
+            <a class="provider-card" href="#deployments"><strong>Cloudflare</strong><span>Workers · DNS</span><small>Chưa kết nối</small></a>
+          </div>
+        </section>
+
+        <section class="view" id="servers" data-view="servers" hidden aria-labelledby="servers-title">
+          <div class="page-heading"><div><p class="eyebrow">MODULE / 01</p><h1 id="servers-title">Server Management</h1><p class="lede">Quản lý máy chủ, Docker containers và tài nguyên bằng telemetry có nguồn xác thực.</p></div><span class="state-chip">CHƯA KẾT NỐI</span></div>
+          <div class="empty-panel"><span class="empty-icon" aria-hidden="true">01</span><h2>Chưa có server hoặc Docker agent được kết nối</h2><p>CPU, RAM, disk, network, container inventory và uptime chưa có nguồn đo. Các giá trị được để trống thay vì hiển thị 0.</p><dl><div><dt>Nguồn cần có</dt><dd>Agent/collector đã đăng ký và xác thực</dd></div><div><dt>Trạng thái hiện tại</dt><dd>Chưa có mẫu telemetry</dd></div><div><dt>Hành động</dt><dd>Chỉ quan sát; chưa hỗ trợ restart hoặc thay cấu hình</dd></div></dl></div>
+        </section>
+
+        <section class="view" id="monitoring" data-view="monitoring" hidden aria-labelledby="monitoring-title">
+          <div class="page-heading"><div><p class="eyebrow">MODULE / 02</p><h1 id="monitoring-title">Live Monitoring</h1><p class="lede">Theo dõi trạng thái theo thời gian thực, kèm thời điểm và nguồn thu thập.</p></div><span class="state-chip">CHƯA CÓ TELEMETRY</span></div>
+          <div class="empty-panel"><span class="empty-icon" aria-hidden="true">02</span><h2>Chưa có telemetry host hoặc Sandbox</h2><p>Chưa có exporter/agent được cấu hình cho module này. GitHub Actions là trạng thái CI, không phải số đo CPU/RAM của máy chủ.</p><dl><div><dt>Metric gần nhất</dt><dd>—</dd></div><div><dt>Thời điểm mẫu</dt><dd>—</dd></div><div><dt>Độ mới</dt><dd>Chưa xác định vì chưa có nguồn</dd></div></dl></div>
+        </section>
+
+        <section class="view" id="databases" data-view="databases" hidden aria-labelledby="databases-title">
+          <div class="page-heading"><div><p class="eyebrow">MODULE / 03</p><h1 id="databases-title">Database Monitoring</h1><p class="lede">Giám sát database và API health mà không đưa credential ra khỏi secret store.</p></div><span class="state-chip">CHƯA KẾT NỐI</span></div>
+          <div class="empty-panel"><span class="empty-icon" aria-hidden="true">03</span><h2>Chưa có database exporter hoặc API health check</h2><p>Chưa có số liệu health, connection, latency, dung lượng hay API availability. Không sử dụng URL mẫu hoặc credential từ trình duyệt.</p><dl><div><dt>Engines dự kiến</dt><dd>PostgreSQL · MySQL · Redis</dd></div><div><dt>API checks</dt><dd>Chưa cấu hình</dd></div><div><dt>Metric</dt><dd>—</dd></div><div><dt>Quyền truy cập</dt><dd>Chưa có connector read-only</dd></div></dl></div>
+        </section>
+
+        <section class="view" id="security" data-view="security" hidden aria-labelledby="security-title">
+          <div class="page-heading"><div><p class="eyebrow">MODULE / 04</p><h1 id="security-title">Security Monitoring</h1><p class="lede">Theo dõi OAuth/Auth, sự kiện bảo mật và thay đổi quyền.</p></div><span class="state-chip">CHƯA CÓ SỰ KIỆN</span></div>
+          <div class="empty-panel"><span class="empty-icon" aria-hidden="true">04</span><h2>Chưa có audit event source</h2><p>Không thể suy ra trạng thái an toàn khi chưa kết nối nguồn sự kiện. Trang này không thực hiện quét, thay đổi quyền hay xác nhận cấu hình bảo mật.</p><dl><div><dt>Event source</dt><dd>Chưa kết nối</dd></div><div><dt>Thời điểm kiểm tra</dt><dd>—</dd></div><div><dt>Audit events</dt><dd>—</dd></div></dl></div>
+        </section>
+
+        <section class="view" id="sandboxes" data-view="sandboxes" hidden aria-labelledby="sandboxes-title">
+          <div class="page-heading"><div><p class="eyebrow">MODULE / 05</p><h1 id="sandboxes-title">Sandbox Management</h1><p class="lede">Quản lý môi trường thực thi code, runtime và giới hạn tài nguyên.</p></div><span class="state-chip">CHƯA KẾT NỐI</span></div>
+          <div class="empty-panel"><span class="empty-icon" aria-hidden="true">05</span><h2>Chưa có Sandbox provider kết nối</h2><p>Vòng đời, CPU/RAM quota và lịch sử chạy chưa được cung cấp. Không có thao tác tạo, dừng hoặc xóa môi trường trong bản read-only này.</p><dl><div><dt>Runtime</dt><dd>—</dd></div><div><dt>Resource usage</dt><dd>—</dd></div><div><dt>Last seen</dt><dd>—</dd></div></dl></div>
+        </section>
+
+        <section class="view" id="alerts" data-view="alerts" hidden aria-labelledby="alerts-title">
+          <div class="page-heading"><div><p class="eyebrow">MODULE / 06</p><h1 id="alerts-title">Alert Center</h1><p class="lede">Cảnh báo sự cố tập trung từ các nguồn đã kết nối và xác minh.</p></div><span class="state-chip">CHƯA CÓ NGUỒN</span></div>
+          <div class="empty-panel"><span class="empty-icon" aria-hidden="true">06</span><h2>Chưa nhận được error log hoặc alert feed</h2><p>Số cảnh báo hiện chưa xác định; chưa có log collector hoặc rule engine. `—` nghĩa là chưa có nguồn, không đồng nghĩa với “không có sự cố”.</p><dl><div><dt>Cảnh báo đang mở</dt><dd>—</dd></div><div><dt>Error logs</dt><dd>Chưa kết nối</dd></div><div><dt>Automatic alerts</dt><dd>Chưa có rule source</dd></div></dl></div>
+        </section>
+
+        <section class="view" id="github" data-view="github" hidden aria-labelledby="github-title">
+          <div class="page-heading"><div><p class="eyebrow">INTEGRATION / PUBLIC API</p><h1 id="github-title">GitHub &amp; CI/CD</h1><p class="lede">Dữ liệu công khai chỉ đọc từ repository OCodejs/OCodejs; không dùng token.</p></div><span class="state-chip" id="github-view-state">ĐANG TẢI</span></div>
+          <div class="github-panel" id="github-panel" aria-live="polite"><p>Đang kiểm tra GitHub Public REST API…</p></div>
+          <div class="section-heading section-heading-compact"><div><p class="eyebrow">WORKFLOW RUNS</p><h2>CI/CD gần đây</h2></div><span class="section-count">GITHUB ACTIONS · READ-ONLY</span></div>
+          <div class="run-list" id="workflow-list" aria-live="polite"><p class="empty-inline">Đang tải workflow runs…</p></div>
+          <p class="fine-print">Nguồn: api.github.com · Chỉ GET dữ liệu repository công khai · Tự làm mới tối đa mỗi 5 phút. GitHub rate-limit hoặc lỗi mạng sẽ được báo rõ.</p>
+        </section>
+
+        <section class="view" id="deployments" data-view="deployments" hidden aria-labelledby="deployments-title">
+          <div class="page-heading"><div><p class="eyebrow">INTEGRATION / DEPLOYMENTS</p><h1 id="deployments-title">Deployments</h1><p class="lede">Tập trung trạng thái Vercel, Netlify và Cloudflare sau khi kết nối nguồn được ủy quyền.</p></div><span class="state-chip">CHƯA KẾT NỐI</span></div>
+          <div class="provider-grid provider-grid-large"><article class="provider-card"><strong>Vercel</strong><span>Projects · deployments · builds</span><small>Chưa kết nối — chưa có credential phía server</small></article><article class="provider-card"><strong>Netlify</strong><span>Sites · deploys · build logs</span><small>Chưa kết nối — chưa có credential phía server</small></article><article class="provider-card"><strong>Cloudflare</strong><span>Workers · deployments · DNS</span><small>Chưa kết nối — chưa có credential phía server</small></article></div>
+          <div class="notice notice-info"><span class="notice-icon" aria-hidden="true">i</span><div><strong>Chỉ xem trạng thái trong phase này</strong><p>Không có nút deploy, đổi cấu hình DNS hoặc sửa service.</p></div></div>
+        </section>
+
+        <section class="view" id="agents" data-view="agents" hidden aria-labelledby="agents-title">
+          <div class="page-heading"><div><p class="eyebrow">INTEGRATION / AI AGENTS</p><h1 id="agents-title">AI Agents &amp; Runtime</h1><p class="lede">Quan sát runs, quyền công cụ và môi trường chạy code khi có nguồn xác thực.</p></div><span class="state-chip">CHƯA KẾT NỐI</span></div>
+          <div class="empty-panel"><span class="empty-icon" aria-hidden="true">AI</span><h2>Chưa có agent run source</h2><p>Không có dữ liệu run, tool permissions hoặc sandbox assignment được cung cấp cho Control Center.</p><dl><div><dt>Active runs</dt><dd>—</dd></div><div><dt>Tool permission source</dt><dd>Chưa kết nối</dd></div><div><dt>Run audit</dt><dd>—</dd></div></dl></div>
+        </section>
+
+        <section class="view" id="settings" data-view="settings" hidden aria-labelledby="settings-title">
+          <div class="page-heading"><div><p class="eyebrow">WORKSPACE / SECURITY</p><h1 id="settings-title">Kết nối &amp; cài đặt</h1><p class="lede">Quản lý nguồn dữ liệu theo nguyên tắc least privilege — hiện chỉ bật GitHub public read-only.</p></div><span class="state-chip">READ-ONLY</span></div>
+          <div class="empty-panel"><span class="empty-icon" aria-hidden="true">SEC</span><h2>Chưa có form nhập credential</h2><p>Không nhập token vào trang này. Các kết nối cần được bổ sung qua backend xác thực và secret manager ở một thay đổi được phê duyệt riêng.</p><dl><div><dt>GitHub</dt><dd>API công khai · GET-only</dd></div><div><dt>Vercel / Netlify / Cloudflare</dt><dd>Chưa kết nối</dd></div><div><dt>OAuth / Auth</dt><dd>Chưa cấu hình cho Control Center</dd></div></dl></div>
+        </section>
+
+        <footer class="page-footer"><span>OCode.js Control Center</span><span id="last-checked">Chưa kiểm tra nguồn</span></footer>
+      </div>
+    </main>
+  </body>
+</html>
