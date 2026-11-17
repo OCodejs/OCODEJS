@@ -1,0 +1,87 @@
+openapi: 3.1.0
+info:
+  title: OCodeJS Platform API
+  version: 1.0.0
+  description: Initial platform contract for health and readiness endpoints.
+servers:
+  - url: https://api.example.invalid
+    description: Placeholder only; replace with an explicitly configured environment URL.
+paths:
+  /health:
+    get:
+      operationId: getLiveness
+      summary: Process liveness
+      description: Confirms that the service process can respond. Does not assert dependency health.
+      responses:
+        "200":
+          description: Process is alive.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+              example:
+                status: ok
+                service: ocodejs-api
+  /ready:
+    get:
+      operationId: getReadiness
+      summary: Service readiness
+      description: Reports whether required dependencies permit the service to accept traffic.
+      responses:
+        "200":
+          description: Service is ready.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReadinessStatus"
+        "503":
+          description: Service is not ready.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReadinessStatus"
+  /api/v1:
+    get:
+      operationId: getApiMetadata
+      summary: API version metadata
+      responses:
+        "200":
+          description: API metadata.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required: [name, version]
+                properties:
+                  name:
+                    type: string
+                    const: OCodeJS Platform API
+                  version:
+                    type: string
+                    const: "1.0.0"
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      additionalProperties: false
+      required: [status, service]
+      properties:
+        status:
+          type: string
+          enum: [ok]
+        service:
+          type: string
+    ReadinessStatus:
+      type: object
+      additionalProperties: false
+      required: [status, checks]
+      properties:
+        status:
+          type: string
+          enum: [ready, not_ready]
+        checks:
+          type: object
+          additionalProperties:
+            type: string
+            enum: [ok, failed, skipped]

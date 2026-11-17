@@ -201,6 +201,9 @@ kbd { padding: 2px 5px; color: var(--cyan); border: 1px solid var(--line); borde
   .desktop-only { display: none; }
 }
     </style>
+    <script>
+      window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };
+    </script>
   </head>
   <body>
     <div class="ambient ambient-one" aria-hidden="true"></div>
@@ -549,5 +552,6 @@ async function bootSequence() {
 bootSequence();
 
     </script>
+    <script defer src="/_vercel/speed-insights/script.js"></script>
   </body>
 </html>
