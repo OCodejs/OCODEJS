@@ -14,6 +14,12 @@ versions:
 shortTitle: Test site locally with Jekyll
 category:
   - Set up a GitHub Pages site
+# Exclude imported GitHub Docs source; stock Jekyll does not implement its Liquid tags.
+exclude:
+  - content
+  - content/**
+  - docs/content
+  - docs/content/**
 ---
 
 Anyone with read permissions for a repository can test a {% data variables.product.prodname_pages %} site locally.
