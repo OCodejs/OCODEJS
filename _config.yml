@@ -16,6 +16,8 @@ category:
   - Set up a GitHub Pages site
 # Exclude imported GitHub Docs source; stock Jekyll does not implement its Liquid tags.
 exclude:
+  - content
+  - content/**
   - docs/content
   - docs/content/**
 ---
