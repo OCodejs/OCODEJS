@@ -68,3 +68,50 @@ jobs:
           }
           console.log('Public entry point exports verified.');
           NODE
+
+  staging-build:
+    if: github.event_name == 'pull_request'
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 22
+      - name: Build isolated static staging artifact
+        run: node scripts/prepare-site.mjs
+      - name: Verify staged home route
+        run: test -s _site/home/index.html
+      - name: Smoke-test staged static route
+        run: |
+          python3 -m http.server 4173 --directory _site >/tmp/ocodejs-staging-http.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          for attempt in $(seq 1 30); do
+            if curl -fsSL http://127.0.0.1:4173/home/ -o /tmp/ocodejs-staged-home.html; then
+              break
+            fi
+            sleep 1
+          done
+          grep -q "OCodeJS Developer Platform" /tmp/ocodejs-staged-home.html
+      - name: Smoke-test application /home routes
+        run: |
+          PORT=4174 node termainl-task/pages/server.mjs >/tmp/ocodejs-app-server.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          for attempt in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:4174/home -o /tmp/ocodejs-app-home.html; then
+              break
+            fi
+            sleep 1
+          done
+          grep -q "OCodeJS Developer Platform" /tmp/ocodejs-app-home.html
+          curl -fsS http://127.0.0.1:4174/home/ -o /tmp/ocodejs-app-home-slash.html
+          grep -q "OCodeJS Developer Platform" /tmp/ocodejs-app-home-slash.html
+      - name: Upload isolated staging artifact
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ocodejs-developer-platform-staging
+          path: _site/
+          if-no-files-found: error
+          retention-days: 7
