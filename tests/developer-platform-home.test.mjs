@@ -23,6 +23,17 @@ test("Developer Platform Home has canonical metadata and one semantic main headi
   assert.match(html, /OCodeJS Developer Platform/);
 });
 
+test("home uses canonical monorepo logo and brand artwork assets", () => {
+  assert.match(html, /assets\\/OCODEJS_app_icon\\.png/);
+  assert.match(html, /assets\\/OCODEJS_logo_O_round\\.png/);
+  assert.match(html, /assets\\/OCODEJS_design_01\\.png/);
+  assert.match(html, /assets\\/OCODEJS_design_02_fixed\\.png/);
+  assert.match(html, /assets\\/OCODEJS_design_04\\.png/);
+  assert.match(html, /id="brand-assets"/);
+  assert.match(html, /class="asset-gallery"/);
+  assert.match(html, /class="brand-mark" aria-hidden="true"/);
+});
+
 test("all ten product taxonomy groups are present exactly once", () => {
   for (const id of expectedGroups) {
     const matches = html.match(new RegExp('id="' + id + '"', "g")) || [];
