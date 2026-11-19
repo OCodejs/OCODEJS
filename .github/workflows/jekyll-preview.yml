@@ -8,9 +8,6 @@ on:
       - "docs.mdx"
       - "docs/content/**"
       - ".github/workflows/jekyll-preview.yml"
-  push:
-    branches:
-      - "fix/jekyll-exclude-github-docs-content-20261117"
 
 permissions:
   contents: read
@@ -26,6 +23,18 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Validate Jekyll configuration and exclusions
+        run: |
+          ruby - <<'RUBY'
+          require "yaml"
+          config = YAML.load_file("_config.yml")
+          abort "Jekyll config must be a mapping" unless config.is_a?(Hash)
+          excluded = Array(config["exclude"])
+          %w[docs.mdx docs/content docs/content/**].each do |path|
+            abort "Missing Jekyll exclusion: #{path}" unless excluded.include?(path)
+          end
+          puts "Jekyll configuration and MDX exclusions are valid."
+          RUBY
       - name: Build with GitHub Pages Jekyll image
         uses: actions/jekyll-build-pages@44a6e6beabd48582f863aeeb6cb2151cc1716697 # v1
         with:
