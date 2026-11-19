@@ -34,7 +34,7 @@ const safeFile = (requestedPath) => {
 const server = createServer(async (req, res) => {
   try {
     const pathname = decodeURIComponent(new URL(req.url, `http://${req.headers.host || 'localhost'}`).pathname);
-    const relative = pathname === '/' ? 'index.html' : pathname.replace(/^\\/+/, '');
+    const relative = pathname === '/' ? 'index.html' : pathname.replace(/^\/+/, '');
     const isDeveloperHome = pathname === '/home' || pathname === '/home/';
     const candidates = pathname === '/manus-routes.json'
       ? ['public/manus-routes.json']
