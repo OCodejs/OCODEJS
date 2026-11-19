@@ -32,6 +32,8 @@ test("home uses canonical monorepo logo and brand artwork assets", () => {
   assert.match(html, /id="brand-assets"/);
   assert.match(html, /class="asset-gallery"/);
   assert.match(html, /class="brand-mark" aria-hidden="true"/);
+  assert.match(html, /\.nav-actions\{margin-left:auto\}/);
+  assert.match(html, /\.asset-gallery\{grid-template-columns:1fr\}/);
 });
 
 test("all ten product taxonomy groups are present exactly once", () => {
