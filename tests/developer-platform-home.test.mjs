@@ -109,6 +109,8 @@ test("Node pages server serves /home and /home/ from the root home document", as
       ready = response.ok;
       if (ready) {
         assert.match(await response.text(), /OCodeJS Developer Platform/);
+        assert.match(response.headers.get("content-type") || "", /text\\/html/);
+        assert.equal(response.headers.get("x-content-type-options"), "nosniff");
         break;
       }
     } catch {
