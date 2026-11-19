@@ -4,6 +4,8 @@ import { mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { spawn } from "node:child_process";
+import { createServer } from "node:net";
 import { prepareSite } from "../scripts/prepare-site.mjs";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
@@ -49,6 +51,47 @@ test("catalog links use safe protocols and descriptive labels", () => {
     if (/target="_blank"/.test(attrs)) assert.match(attrs, /rel="noopener noreferrer"/);
     assert.ok(content.replace(/<[^>]*>/g, "").trim(), "Every link must have an accessible name");
   }
+});
+
+test("Node pages server serves /home and /home/ from the root home document", async (t) => {
+  const probe = createServer();
+  await new Promise((resolveListen, reject) => {
+    probe.once("error", reject);
+    probe.listen(0, "127.0.0.1", resolveListen);
+  });
+  const { port } = probe.address();
+  await new Promise((resolveClose, reject) => probe.close((error) => error ? reject(error) : resolveClose()));
+
+  const server = spawn(process.execPath, [resolve(root, "termainl-task/pages/server.mjs")], {
+    env: { ...process.env, PORT: String(port) },
+    stdio: ["ignore", "ignore", "pipe"],
+  });
+  let stderr = "";
+  server.stderr.setEncoding("utf8");
+  server.stderr.on("data", (chunk) => { stderr += chunk; });
+  t.after(() => {
+    if (server.exitCode === null && !server.killed) server.kill("SIGTERM");
+  });
+
+  let ready = false;
+  for (let attempt = 0; attempt < 40; attempt += 1) {
+    if (server.exitCode !== null) break;
+    try {
+      const response = await fetch(`http://127.0.0.1:${port}/home`);
+      ready = response.ok;
+      if (ready) {
+        assert.match(await response.text(), /OCodeJS Developer Platform/);
+        break;
+      }
+    } catch {
+      await new Promise((resolveDelay) => setTimeout(resolveDelay, 100));
+    }
+  }
+  assert.equal(ready, true, `Pages server did not serve /home. stderr: ${stderr}`);
+
+  const slashResponse = await fetch(`http://127.0.0.1:${port}/home/`);
+  assert.equal(slashResponse.status, 200);
+  assert.match(await slashResponse.text(), /OCodeJS Developer Platform/);
 });
 
 test("Netlify staging build copies the /home route into the published directory", async () => {
