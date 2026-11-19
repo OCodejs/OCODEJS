@@ -1,23 +1,40 @@
 import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
-import { extname, join, normalize } from 'node:path';
+import { extname, isAbsolute, join, relative as relativePath, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = fileURLToPath(new URL('.', import.meta.url));
 const developerHome = fileURLToPath(new URL('../../home/index.html', import.meta.url));
 const port = Number(process.env.PORT || 3000);
-const types = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.json': 'application/json; charset=utf-8', '.mjs': 'text/javascript; charset=utf-8', '.gif': 'image/gif' };
+const types = {
+  '.html': 'text/html; charset=utf-8',
+  '.css': 'text/css; charset=utf-8',
+  '.js': 'text/javascript; charset=utf-8',
+  '.json': 'application/json; charset=utf-8',
+  '.mjs': 'text/javascript; charset=utf-8',
+  '.gif': 'image/gif',
+  '.png': 'image/png',
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.webp': 'image/webp',
+  '.svg': 'image/svg+xml',
+  '.ico': 'image/x-icon',
+  '.woff2': 'font/woff2',
+};
 
-const safeFile = (relative) => {
-  const file = normalize(join(root, relative));
-  if (!file.startsWith(root)) throw new Error('forbidden');
+const safeFile = (requestedPath) => {
+  const file = resolve(root, requestedPath);
+  const fromRoot = relativePath(root, file);
+  if (fromRoot === '..' || fromRoot.startsWith(`..${sep}`) || isAbsolute(fromRoot)) {
+    throw new Error('forbidden');
+  }
   return file;
 };
 
 const server = createServer(async (req, res) => {
   try {
     const pathname = decodeURIComponent(new URL(req.url, `http://${req.headers.host || 'localhost'}`).pathname);
-    const relative = pathname === '/' ? 'index.html' : pathname.replace(/^\/+/, '');
+    const relative = pathname === '/' ? 'index.html' : pathname.replace(/^\\/+/, '');
     const isDeveloperHome = pathname === '/home' || pathname === '/home/';
     const candidates = pathname === '/manus-routes.json'
       ? ['public/manus-routes.json']
@@ -38,7 +55,11 @@ const server = createServer(async (req, res) => {
       }
     }
     if (!file || !body) throw new Error('not found');
-    res.writeHead(200, { 'Content-Type': types[extname(file)] || 'application/octet-stream', 'Cache-Control': 'no-cache' });
+    res.writeHead(200, {
+      'Content-Type': types[extname(file)] || 'application/octet-stream',
+      'Cache-Control': 'no-cache',
+      'X-Content-Type-Options': 'nosniff',
+    });
     res.end(body);
   } catch {
     res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
