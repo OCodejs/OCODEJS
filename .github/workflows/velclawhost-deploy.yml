@@ -1,0 +1,107 @@
+name: VelclawHost deployment
+
+on:
+  workflow_dispatch:
+    inputs:
+      deploy:
+        description: "Submit a deployment request to VelclawHost (leave false for validation only)"
+        required: true
+        type: boolean
+        default: false
+      custom_domain:
+        description: "Optional hostname already verified and assigned in VelclawHost (for example, docs.example.com)"
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: velclawhost-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    name: Build and validate static site
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+      - name: Set up Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Build and test library
+        run: npm test
+
+      - name: Prepare static website
+        run: node scripts/prepare-site.mjs
+
+      - name: Verify static output
+        run: test -s _site/index.html
+
+  request-deployment:
+    name: Request VelclawHost deployment
+    needs: validate
+    if: inputs.deploy == true
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Validate configuration and submit deployment request
+        env:
+          VELCLAWHOST_API_URL: ${{ secrets.VELCLAWHOST_API_URL }}
+          VELCLAWHOST_API_TOKEN: ${{ secrets.VELCLAWHOST_API_TOKEN }}
+          DEPLOY_BRANCH: ${{ github.ref_name }}
+          DEPLOY_COMMIT: ${{ github.sha }}
+          CUSTOM_DOMAIN: ${{ inputs.custom_domain }}
+        run: |
+          node --input-type=module <<'NODE'
+          const base = process.env.VELCLAWHOST_API_URL;
+          const token = process.env.VELCLAWHOST_API_TOKEN;
+
+          if (!base || !token) {
+            throw new Error('Missing VELCLAWHOST_API_URL or VELCLAWHOST_API_TOKEN repository secret.');
+          }
+
+          const api = new URL(base);
+          if (api.protocol !== 'https:') {
+            throw new Error('VELCLAWHOST_API_URL must use HTTPS.');
+          }
+
+          const domain = process.env.CUSTOM_DOMAIN.trim();
+          if (domain && (!/^(?=.{1,253}$)(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$/.test(domain))) {
+            throw new Error('custom_domain must be a hostname only, without scheme or path.');
+          }
+
+          const response = await fetch(new URL('/api/v1/deployments', api), {
+            method: 'POST',
+            headers: {
+              'content-type': 'application/json',
+              authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              projectName: 'ocodejs',
+              repoUrl: 'https://github.com/OCodejs/OCodejs',
+              branch: process.env.DEPLOY_BRANCH,
+              commitSha: process.env.DEPLOY_COMMIT,
+              customDomain: domain || null,
+            }),
+            signal: AbortSignal.timeout(30_000),
+          });
+
+          const payload = await response.json().catch(() => null);
+          if (!response.ok || !payload?.deployment?.id) {
+            throw new Error(`VelclawHost rejected the deployment request (HTTP ${response.status}). Check the platform API contract and server logs; response body intentionally omitted.`);
+          }
+
+          console.log('VelclawHost accepted a deployment request.');
+          console.log(`Deployment ID: ${payload.deployment.id}`);
+          console.log(`Reported status: ${payload.deployment.status ?? 'not provided'}`);
+          console.log('This confirms request acceptance only, not a successful production deployment.');
+          NODE
