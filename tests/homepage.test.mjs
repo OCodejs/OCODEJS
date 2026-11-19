@@ -43,7 +43,7 @@ test("homepage has one semantic header, main landmark, footer and primary headin
   assert.equal(elements("footer").length, 1);
   assert.equal(elements("h1").length, 1);
   assert.equal(attributes(html.match(/<main\b([^>]*)>/i)?.[1] ?? "").id, "top");
-  assert.match(text(elements("h1")[0].content), /Small tools\.\s*Solid foundations\./);
+  assert.match(text(elements("h1")[0].content), /Build faster\.\s*Think beyond code\./);
 });
 
 test("documentation sections and accessible navigation targets exist", () => {
