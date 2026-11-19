@@ -26,16 +26,16 @@
     .topbar{position:sticky;top:0;z-index:10;background:rgba(5,5,5,.94);backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}
     .nav{height:68px;display:flex;align-items:center;gap:28px}
     .brand{display:inline-flex;align-items:center;gap:11px;font-weight:700;font-size:16px;letter-spacing:-.08em;white-space:nowrap}
-    .brand-mark{display:grid;place-items:center;width:28px;height:28px;border:1px solid #777;font-size:12px;letter-spacing:-.1em}
+    .brand-mark{display:grid;place-items:center;flex:0 0 32px;width:32px;height:32px;border:1px solid #777;padding:3px}.brand-mark img{display:block;width:100%;height:100%;object-fit:contain}
     .brand small{display:block;color:#777;font-size:8px;letter-spacing:.12em;font-weight:400}
     .navlinks{display:flex;align-items:center;gap:24px;margin-left:auto;color:#999;font-size:10px}
     .navlinks a:hover{color:#fff}
     .nav-actions{display:flex;align-items:center;gap:8px}
-    .button{display:inline-flex;min-height:38px;align-items:center;justify-content:center;padding:0 13px;border:1px solid var(--line2);background:#090909;font-size:10px;transition:background .15s,border-color .15s}
+    .button{display:inline-flex;min-height:40px;align-items:center;justify-content:center;padding:0 13px;border:1px solid var(--line2);background:#090909;font-size:10px;transition:background .15s,border-color .15s}
     .button:hover{background:#171717;border-color:#888}
     .button.primary{background:#f5f5f5;color:#050505;border-color:#f5f5f5;font-weight:700}
     .button.primary:hover{background:#d8d8d8}
-    .menu-toggle{display:none;width:40px;height:38px;border:1px solid var(--line2);background:#090909;font-size:18px}
+    .menu-toggle{display:none;width:42px;height:40px;border:1px solid var(--line2);background:#090909;font-size:18px}
     .hero{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(360px,.95fr);gap:clamp(28px,5vw,76px);align-items:center;padding:92px 0 70px;min-height:600px}
     .kicker{display:inline-flex;align-items:center;gap:9px;border:1px solid var(--line2);padding:7px 10px;color:#bdbdbd;font-size:9px;letter-spacing:.09em;text-transform:uppercase}
     .pulse{width:6px;height:6px;background:var(--green);box-shadow:0 0 10px #b9d99a}
@@ -100,11 +100,11 @@
     .cta h2{margin:0;font-size:clamp(22px,3vw,32px)}
     .cta p{margin:9px 0 0;color:#888;font-size:9px}
     footer{padding:30px 0 42px;border-top:1px solid var(--line);color:#777;font-size:9px}
-    .footer-row{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+    .asset-gallery{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:24px}.asset-card{display:block;min-width:0;border:1px solid var(--line);background:#080808;transition:border-color .18s,transform .18s}.asset-card:hover{border-color:#777;transform:translateY(-2px)}.asset-card img{display:block;width:100%;aspect-ratio:16/10;object-fit:cover;background:#101010}.asset-card span{display:flex;justify-content:space-between;gap:10px;padding:12px;color:#999;font-size:9px}.asset-card b{color:#eee;font-weight:500}.footer-row{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
     .footer-links{display:flex;gap:18px;flex-wrap:wrap}
     [hidden]{display:none!important}
     @media(max-width:1050px){.catalog{grid-template-columns:repeat(3,minmax(0,1fr))}.hero{grid-template-columns:1fr 1fr;gap:28px}.navlinks{gap:14px}}
-    @media(max-width:760px){.search{font-size:16px}.wrap{width:min(100% - 32px,var(--max))}.nav{height:60px}.menu-toggle{display:inline-grid;place-items:center}.navlinks{display:none;position:absolute;top:60px;left:0;right:0;padding:16px;background:#080808;border-bottom:1px solid var(--line);flex-direction:column;align-items:stretch;gap:0}.navlinks.open{display:flex}.navlinks a{padding:12px 4px;border-bottom:1px solid #222}.nav-actions .button{display:none}.hero{grid-template-columns:1fr;min-height:auto;padding:64px 0 48px}.hero h1{font-size:clamp(42px,12vw,66px)}.console{max-width:620px}.section{padding:48px 0}.section-head{display:block}.section-desc{margin-top:13px}.catalog{grid-template-columns:repeat(2,minmax(0,1fr))}.feature-grid{grid-template-columns:1fr}.principles{grid-template-columns:repeat(2,1fr)}.principle:nth-child(2){border-right:0}.principle:nth-child(-n+2){border-bottom:1px solid var(--line)}.cta{align-items:flex-start;flex-direction:column}}
+    @media(max-width:760px){.asset-gallery{grid-template-columns:1fr}.search{font-size:16px}.wrap{width:min(100% - 32px,var(--max))}.nav{height:60px}.menu-toggle{display:inline-grid;place-items:center}.navlinks{display:none;position:absolute;top:60px;left:0;right:0;padding:16px;background:#080808;border-bottom:1px solid var(--line);flex-direction:column;align-items:stretch;gap:0}.navlinks.open{display:flex}.navlinks a{padding:12px 4px;border-bottom:1px solid #222}.nav-actions .button{display:none}.hero{grid-template-columns:1fr;min-height:auto;padding:64px 0 48px}.hero h1{font-size:clamp(42px,12vw,66px)}.console{max-width:620px}.section{padding:48px 0}.section-head{display:block}.section-desc{margin-top:13px}.catalog{grid-template-columns:repeat(2,minmax(0,1fr))}.feature-grid{grid-template-columns:1fr}.principles{grid-template-columns:repeat(2,1fr)}.principle:nth-child(2){border-right:0}.principle:nth-child(-n+2){border-bottom:1px solid var(--line)}.cta{align-items:flex-start;flex-direction:column}}
     @media(max-width:420px){.wrap{width:calc(100% - 24px)}.hero{padding-top:48px}.hero-meta{gap:10px}.console-body{padding:15px}.catalog{gap:7px}.tile{min-height:210px;padding:12px}.tile h3{font-size:11px}.tile p{font-size:8px}.principle{padding:13px}.search{flex-basis:100%}.result-count{margin-left:0;width:100%}}
     @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{transition:none!important;animation:none!important}}
   </style>
@@ -113,7 +113,7 @@
   <a class="skip" href="#main">Bỏ qua điều hướng</a>
   <div class="topbar">
     <div class="wrap nav">
-      <a class="brand" href="#top" aria-label="OCodeJS Developer Platform trang chủ"><span class="brand-mark">O/</span><span>OCode.js<small>DEVELOPER PLATFORM</small></span></a>
+      <a class="brand" href="#top" aria-label="OCodeJS Developer Platform trang chủ"><span class="brand-mark" aria-hidden="true"><img src="https://raw.githubusercontent.com/OCodejs/ocodejs-monorepo/main/assets/OCODEJS_app_icon.png" alt=""></span><span>OCode.js<small>DEVELOPER PLATFORM</small></span></a>
       <nav class="navlinks" id="site-nav" aria-label="Điều hướng chính">
         <a href="#catalog">Ecosystem</a><a href="#workspace">Workspace</a><a href="#principles">Principles</a><a href="https://github.com/OCodejs/OCODEJS" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
       </nav>
@@ -177,6 +177,7 @@
         </div>
       </div>
     </section>
+    <section class="section" id="brand-assets" aria-labelledby="brand-assets-title"><div class="wrap"><div class="section-head"><div><div class="section-index">04 / VISUAL IDENTITY</div><h2 id="brand-assets-title">The OCodeJS visual system.</h2></div><p class="section-desc">Artwork và logo được lấy trực tiếp từ thư mục assets chính thức trong monorepo, không sao chép hoặc tạo bản trùng trong repository này.</p></div><div class="asset-gallery"><a class="asset-card" href="https://github.com/OCodejs/ocodejs-monorepo/blob/main/assets/OCODEJS_design_01.png" target="_blank" rel="noopener noreferrer"><img src="https://raw.githubusercontent.com/OCodejs/ocodejs-monorepo/main/assets/OCODEJS_design_01.png" alt="OCodeJS visual identity study 01" loading="lazy" decoding="async"><span><b>Identity / 01</b><small>Open source ↗</small></span></a><a class="asset-card" href="https://github.com/OCodejs/ocodejs-monorepo/blob/main/assets/OCODEJS_design_02_fixed.png" target="_blank" rel="noopener noreferrer"><img src="https://raw.githubusercontent.com/OCodejs/ocodejs-monorepo/main/assets/OCODEJS_design_02_fixed.png" alt="OCodeJS visual identity study 02" loading="lazy" decoding="async"><span><b>Visual system / 02</b><small>Open source ↗</small></span></a><a class="asset-card" href="https://github.com/OCodejs/ocodejs-monorepo/blob/main/assets/OCODEJS_design_04.png" target="_blank" rel="noopener noreferrer"><img src="https://raw.githubusercontent.com/OCodejs/ocodejs-monorepo/main/assets/OCODEJS_design_04.png" alt="OCodeJS visual identity study 04" loading="lazy" decoding="async"><span><b>Product direction / 04</b><small>Open source ↗</small></span></a></div></div></section>
     <section class="section" id="principles" aria-labelledby="principles-title">
       <div class="wrap">
         <div class="section-head"><div><div class="section-index">04 / DESIGN PRINCIPLES</div><h2 id="principles-title">Built for builders.</h2></div><p class="section-desc">Nguyên tắc nền tảng định hình trải nghiệm, kiến trúc và cách hệ sinh thái phát triển.</p></div>
@@ -187,7 +188,7 @@
       <div class="cta"><div><h2>Start with the source.</h2><p>Khám phá repository, theo dõi tiến độ và cùng xây dựng OCodeJS.</p></div><a class="button primary" href="https://github.com/OCodejs/OCODEJS" target="_blank" rel="noopener noreferrer">Open GitHub ↗</a></div>
     </section>
   </main>
-  <footer><div class="wrap footer-row"><span>© OCodeJS · Open developer ecosystem</span><div class="footer-links"><a href="#top">Back to top ↑</a><a href="#catalog">Product map</a><a href="https://github.com/OCodejs/OCODEJS" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div></div></footer>
+  <footer><div class="wrap footer-row"><span class="footer-brand"><img src="https://raw.githubusercontent.com/OCodejs/ocodejs-monorepo/main/assets/OCODEJS_logo_O_round.png" alt="" width="22" height="22" loading="lazy"> © OCodeJS · Open developer ecosystem</span><div class="footer-links"><a href="#top">Back to top ↑</a><a href="#catalog">Product map</a><a href="https://github.com/OCodejs/OCODEJS" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div></div></footer>
   <script>
     (() => {
       const search = document.querySelector("#catalog-search");
