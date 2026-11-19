@@ -120,6 +120,9 @@ test("Node pages server serves /home and /home/ from the root home document", as
   const slashResponse = await fetch(`http://127.0.0.1:${port}/home/`);
   assert.equal(slashResponse.status, 200);
   assert.match(await slashResponse.text(), /OCodeJS Developer Platform/);
+
+  const traversalResponse = await fetch(`http://127.0.0.1:${port}/..%2f..%2f..%2f..%2fetc%2fpasswd`);
+  assert.equal(traversalResponse.status, 404, "Encoded path traversal must not expose files outside the server root");
 });
 
 test("Netlify staging build copies the /home route into the published directory", async () => {
