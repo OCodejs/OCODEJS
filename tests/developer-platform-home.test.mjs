@@ -17,7 +17,7 @@ test("Developer Platform Home has canonical metadata and one semantic main headi
   assert.match(html, /<html lang="vi">/);
   assert.match(html, /<link rel="canonical" href="https:\/\/ocodejs\.dev\/home">/);
   assert.match(html, /<meta name="viewport" content="width=device-width,initial-scale=1">/);
-  assert.equal((html.match(/<h1\\b/g) || []).length, 1);
+  assert.equal((html.match(/<h1\b/g) || []).length, 1);
   assert.match(html, /OCodeJS Developer Platform/);
 });
 
@@ -34,12 +34,12 @@ test("search, category filters and mobile navigation expose accessible state", (
   assert.match(html, /aria-live="polite"/);
   assert.match(html, /aria-pressed="true"/);
   assert.match(html, /aria-controls="site-nav" aria-expanded="false"/);
-  assert.match(html, /@media\\(max-width:760px\\)/);
+  assert.match(html, /@media\(max-width:760px\)/);
   assert.match(html, /border-radius:0/);
 });
 
 test("catalog links use safe protocols and descriptive labels", () => {
-  const links = [...html.matchAll(/<a\\b([^>]*)>([\\s\\S]*?)<\\/a>/g)];
+  const links = [...html.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/g)];
   assert.ok(links.length >= 20);
   for (const [, attrs, content] of links) {
     const href = attrs.match(/href="([^"]+)"/)?.[1];
