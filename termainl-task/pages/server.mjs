@@ -4,6 +4,7 @@ import { extname, join, normalize } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = fileURLToPath(new URL('.', import.meta.url));
+const developerHome = fileURLToPath(new URL('../../home/index.html', import.meta.url));
 const port = Number(process.env.PORT || 3000);
 const types = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.json': 'application/json; charset=utf-8', '.mjs': 'text/javascript; charset=utf-8', '.gif': 'image/gif' };
 
@@ -17,12 +18,17 @@ const server = createServer(async (req, res) => {
   try {
     const pathname = decodeURIComponent(new URL(req.url, `http://${req.headers.host || 'localhost'}`).pathname);
     const relative = pathname === '/' ? 'index.html' : pathname.replace(/^\/+/, '');
+    const isDeveloperHome = pathname === '/home' || pathname === '/home/';
     const candidates = pathname === '/manus-routes.json'
       ? ['public/manus-routes.json']
       : [relative, `public/${relative}`];
     let file;
     let body;
-    for (const candidate of candidates) {
+    if (isDeveloperHome) {
+      file = developerHome;
+      body = await readFile(developerHome);
+    }
+    for (const candidate of isDeveloperHome ? [] : candidates) {
       try {
         file = safeFile(candidate);
         body = await readFile(file);
