@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - "_config.yml"
+      - "docs.mdx"
       - "docs/content/**"
       - ".github/workflows/jekyll-preview.yml"
   push:
