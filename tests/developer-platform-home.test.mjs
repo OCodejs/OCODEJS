@@ -35,6 +35,7 @@ test("search, category filters and mobile navigation expose accessible state", (
   assert.match(html, /aria-pressed="true"/);
   assert.match(html, /aria-controls="site-nav" aria-expanded="false"/);
   assert.match(html, /@media\(max-width:760px\)/);
+  assert.match(html, /\.search\{font-size:16px\}/, "Mobile search text must prevent iOS focus zoom");
   assert.match(html, /border-radius:0/);
 });
 
