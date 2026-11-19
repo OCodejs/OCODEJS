@@ -16,7 +16,7 @@ function attributes(markup) {
 }
 
 function elements(tag, markup = body) {
-  return [...markup.matchAll(new RegExp(`<${tag}\\b([^>]*)>([\\s\\S]*?)<\\/ ${tag}\\s*>`.replace("<\\/ ", "</"), "gi"))]
+  return [...markup.matchAll(new RegExp(`<${tag}\\b([^>]*)>([\\s\\S]*?)<\\/${tag}\\s*>`, "gi"))]
     .map((match) => ({ attributes: attributes(match[1]), content: match[2] }));
 }
 
@@ -43,7 +43,6 @@ test("homepage has one semantic header, main landmark, footer and primary headin
   assert.equal(elements("footer").length, 1);
   assert.equal(elements("h1").length, 1);
   assert.equal(attributes(html.match(/<main\b([^>]*)>/i)?.[1] ?? "").id, "top");
-  // Keep this assertion aligned with the current homepage hero copy.
   assert.match(text(elements("h1")[0].content), /Build faster\.\s*Think beyond code\./);
 });
 
