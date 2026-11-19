@@ -75,7 +75,7 @@ jobs:
           }
 
           const domain = process.env.CUSTOM_DOMAIN.trim();
-          if (domain && (!/^(?=.{1,253}$)(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\\.)+[a-zA-Z]{2,}$/.test(domain))) {
+          if (domain && (!/^(?=.{1,253}$)(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$/.test(domain))) {
             throw new Error('custom_domain must be a hostname only, without scheme or path.');
           }
 
