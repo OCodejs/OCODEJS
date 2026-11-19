@@ -56,6 +56,19 @@ test("search, category filters and mobile navigation expose accessible state", (
   assert.match(html, /border-radius:0/);
 });
 
+test("mobile navigation has accessible touch target, escape handling and ordered sections", () => {
+  assert.match(html, /\.menu-toggle\{[^}]*width:44px;height:44px;min-width:44px;min-height:44px;/);
+  assert.match(html, /event\.key === "Escape"/);
+  assert.match(html, /if \(restoreFocus\) toggle\.focus\(\)/);
+  const indexes = [...html.matchAll(/class="section-index">([^<]+)/g)].map((match) => match[1]);
+  assert.deepEqual(indexes, [
+    "02 / PRODUCT MAP",
+    "03 / WORKSPACE",
+    "04 / VISUAL IDENTITY",
+    "05 / DESIGN PRINCIPLES",
+  ]);
+});
+
 test("catalog links use safe protocols and descriptive labels", () => {
   const links = [...html.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/g)];
   assert.ok(links.length >= 20);
