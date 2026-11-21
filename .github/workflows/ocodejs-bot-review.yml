@@ -26,7 +26,21 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
+      - name: Check bot credentials are configured
+        id: preflight
+        env:
+          BOT_CLIENT_ID: ${{ vars.OCODEJS_BOT_CLIENT_ID }}
+          BOT_PRIVATE_KEY: ${{ secrets.OCODEJS_BOT_PRIVATE_KEY }}
+        run: |
+          if [ -n "$BOT_CLIENT_ID" ] && [ -n "$BOT_PRIVATE_KEY" ]; then
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "OCodeJS Bot GitHub App is not configured yet; skipping model download and comment publication."
+          fi
+
       - name: Prepare bounded PR diff
+        if: steps.preflight.outputs.configured == 'true'
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
@@ -54,6 +68,7 @@ jobs:
           } > /tmp/ocodejs-review-prompt.md
 
       - name: Install local open-source model runtime
+        if: steps.preflight.outputs.configured == 'true'
         run: |
           set -euo pipefail
           curl -fsSL https://ollama.com/install.sh | sh
@@ -67,6 +82,7 @@ jobs:
           ollama pull qwen2.5-coder:1.5b
 
       - name: Generate AI review locally
+        if: steps.preflight.outputs.configured == 'true'
         run: |
           set -euo pipefail
           ollama run qwen2.5-coder:1.5b < /tmp/ocodejs-review-prompt.md > /tmp/ocodejs-review.md
@@ -83,6 +99,7 @@ jobs:
       # Create the App token only after untrusted diff content has been processed.
       - name: Create OCodeJS Bot installation token
         id: app-token
+        if: steps.preflight.outputs.configured == 'true'
         uses: actions/create-github-app-token@v3
         with:
           client-id: ${{ vars.OCODEJS_BOT_CLIENT_ID }}
@@ -90,8 +107,18 @@ jobs:
           permission-pull-requests: write
 
       - name: Publish review as OCodeJS Bot
+        if: steps.preflight.outputs.configured == 'true'
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
           GH_REPO: ${{ github.repository }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: gh pr comment "$PR_NUMBER" --repo "$GH_REPO" --body-file review_comment.md
+
+      - name: Explain pending GitHub App setup
+        if: steps.preflight.outputs.configured != 'true'
+        run: |
+          {
+            echo "## OCodeJS Bot is not configured yet"
+            echo "Create and install the GitHub App, then add `OCODEJS_BOT_CLIENT_ID` and `OCODEJS_BOT_PRIVATE_KEY` as documented in `.github/OCODEJS_BOT_SETUP.md`."
+            echo "The model was not downloaded and no comment was attempted."
+          } >> "$GITHUB_STEP_SUMMARY"
