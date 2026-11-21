@@ -8,7 +8,7 @@ Open https://github.com/organizations/OCodejs/settings/apps/new while signed in 
 
 Suggested settings:
 
-- GitHub App name: `OCodeJS Bot` (GitHub assigns the bot identity/slug; availability is determined by GitHub).
+- GitHub App name: `ocodejs` (use this exact name if available so the generated bot login can be `ocodejs[bot]`; GitHub controls slug availability and may require a different slug).
 - Homepage URL: https://github.com/OCodejs/OCODEJS
 - Webhook: disable **Active** for this Actions-only phase.
 - Repository permissions:
