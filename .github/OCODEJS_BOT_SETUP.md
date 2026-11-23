@@ -29,9 +29,9 @@ Never commit the PEM file or paste it into an issue, PR, or chat.
 
 ## 3. Trigger and verify
 
-Open or update a pull request targeting `main`. The unprivileged `OCodeJS Bot — PR Review Signal` workflow runs on `pull_request` with empty permissions, no secrets, no checkout, and no PR-code execution. After it completes, the trusted `workflow_run` publisher validates the originating workflow and current same-repository PR, fetches at most 50 KB of diff through the GitHub API as data, runs Qwen2.5-Coder locally, then creates a short-lived installation token and posts an advisory comment. The trusted publisher never checks out or executes PR code.
+Mark a same-repository Draft PR ready for review, or update an already-ready PR targeting `main`. The unprivileged `OCodeJS Bot — PR Review Signal` workflow runs on `pull_request` with empty permissions, no secrets, no checkout, and no PR-code execution. The trusted `workflow_run` publisher is defined on the default branch; it validates the originating workflow and current same-repository, non-draft PR, fetches at most 50 KB of diff through the GitHub API as data, runs Qwen2.5-Coder locally, then creates a short-lived installation token and posts an advisory comment. The trusted publisher never checks out or executes PR code. Draft PR creation alone does not start model inference.
 
-The current workflow intentionally skips pull requests from forks because repository Actions secrets are not available to those runs. Fork PRs remain subject to the normal CI and human review.
+Fork-originated PRs may emit the unprivileged signal, but the trusted publisher rejects them. They remain subject to normal CI and human review.
 
 ## 4. Security and limitations
 
