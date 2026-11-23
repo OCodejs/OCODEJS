@@ -29,15 +29,16 @@ Never commit the PEM file or paste it into an issue, PR, or chat.
 
 ## 3. Trigger and verify
 
-Open or update a pull request targeting `main`. The workflow downloads `qwen2.5-coder:1.5b` into the ephemeral GitHub-hosted runner, reviews a bounded diff locally, then creates a short-lived installation token and posts the report as the GitHub App.
+Mark a same-repository Draft PR ready for review, or update an already-ready PR targeting `main`. The unprivileged `OCodeJS Bot — PR Review Signal` workflow runs on `pull_request` with empty permissions, no secrets, no checkout, and no PR-code execution. The trusted `workflow_run` publisher is defined on the default branch; it validates the originating workflow and current same-repository, non-draft PR, fetches at most 50 KB of diff through the GitHub API as data, runs Qwen2.5-Coder locally, then creates a short-lived installation token and posts an advisory comment. The trusted publisher never checks out or executes PR code. Draft PR creation alone does not start model inference.
 
-The current workflow intentionally skips pull requests from forks because repository Actions secrets are not available to those runs. Fork PRs remain subject to the normal CI and human review.
+Fork-originated PRs may emit the unprivileged signal, but the trusted publisher rejects them. They remain subject to normal CI and human review.
 
 ## 4. Security and limitations
 
 - The model receives only up to 50 KB of textual diff, not the full repository.
 - PR contents are treated as untrusted prompt data; the model is not given shell or repository write tools.
-- The App token is created after model processing and is scoped to Pull requests: write.
+- The PR signal workflow has no secrets and no permissions; the privileged publisher runs only from the default branch via `workflow_run` and never checks out PR code.
+- The App private key is first exposed to a trusted step after model inference; the installation token is scoped to Pull requests: write.
 - No automatic code changes, commits, approvals, merges, or deployments are performed.
 - Local inference is API-key-free, but runner time, model download time, and bandwidth are still consumed. Public-repository standard GitHub-hosted Actions usage is currently free; private-repository usage is subject to plan quotas and billing.
 - Review comments are advisory and can be incorrect. Required CI and human review remain authoritative.
