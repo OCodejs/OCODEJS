@@ -18,7 +18,11 @@ test("trusted publisher is isolated behind workflow_run", () => {
   assert.match(publisher, /OCodeJS Bot — PR Review Signal/);
   assert.match(publisher, /\.github\/workflows\/ocodejs-bot-review\.yml/);
   assert.match(publisher, /head_repository\.full_name/);
-  assert.match(publisher, /pull_requests\[0\]\.number/);
+  assert.match(publisher, /RUN_HEAD_BRANCH/);
+  assert.match(publisher, /RUN_HEAD_SHA/);
+  assert.match(publisher, /repos\/\$GH_REPO\/pulls/);
+  assert.match(publisher, /test "\$match_count" -eq 1/);
+  assert.doesNotMatch(publisher, /pull_requests\[0\]/);
   assert.doesNotMatch(publisher, /actions\/checkout/);
 });
 
@@ -27,7 +31,9 @@ test("trusted publisher validates current same-repository, non-draft main PR", (
   assert.match(publisher, /"main"/);
   assert.match(publisher, /\.draft/);
   assert.match(publisher, /\.head\.repo\.full_name/);
-  assert.match(publisher, /EVENT_PR_HEAD_SHA/);
+  assert.match(publisher, /RUN_HEAD_SHA/);
+  assert.match(publisher, /\.head\.sha == \$sha/);
+  assert.match(publisher, /\.head\.repo\.full_name == \$repo/);
 });
 
 test("diff is bounded and model output is bounded before publication", () => {
