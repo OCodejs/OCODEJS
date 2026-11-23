@@ -2,7 +2,7 @@ name: OCodeJS Bot — PR Review Signal
 
 on:
   pull_request:
-    types: [synchronize, reopened, ready_for_review, edited]
+    types: [opened, synchronize, reopened, ready_for_review, edited]
     branches: [main]
 
 # No secrets, no repository permissions, no checkout, and no PR-code execution.
