@@ -20,7 +20,7 @@ jobs:
       github.event.workflow_run.event == 'pull_request' &&
       startsWith(github.event.workflow_run.path, '.github/workflows/ocodejs-bot-review.yml') &&
       github.event.workflow_run.head_repository.full_name == github.repository &&
-      github.event.workflow_run.pull_requests[0].number != null
+      github.event.workflow_run.head_branch != ''
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -31,9 +31,9 @@ jobs:
           GH_REPO: ${{ github.repository }}
           RUN_ID: ${{ github.event.workflow_run.id }}
           RUN_HEAD_REPO: ${{ github.event.workflow_run.head_repository.full_name }}
+          RUN_HEAD_BRANCH: ${{ github.event.workflow_run.head_branch }}
+          RUN_HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
           RUN_PATH: ${{ github.event.workflow_run.path }}
-          EVENT_PR_HEAD_SHA: ${{ github.event.workflow_run.pull_requests[0].head.sha }}
-          PR_NUMBER: ${{ github.event.workflow_run.pull_requests[0].number }}
         run: |
           set -euo pipefail
           case "$RUN_PATH" in
@@ -45,13 +45,22 @@ jobs:
           test "$(jq -r '.event' <<<"$run_json")" = "pull_request"
           test "$(jq -r '.path' <<<"$run_json" | cut -d@ -f1)" = ".github/workflows/ocodejs-bot-review.yml"
           test "$(jq -r '.head_repository.full_name // empty' <<<"$run_json")" = "$GH_REPO"
+          test "$(jq -r '.head_branch' <<<"$run_json")" = "$RUN_HEAD_BRANCH"
+          test "$(jq -r '.head_sha' <<<"$run_json")" = "$RUN_HEAD_SHA"
           test "$(jq -r '.conclusion' <<<"$run_json")" = "success"
-          pr_json="$(gh api "repos/$GH_REPO/pulls/$PR_NUMBER")"
-          test "$(jq -r '.state' <<<"$pr_json")" = "open"
-          test "$(jq -r '.draft' <<<"$pr_json")" = "false"
-          test "$(jq -r '.base.ref' <<<"$pr_json")" = "main"
-          test "$(jq -r '.head.repo.full_name // empty' <<<"$pr_json")" = "$GH_REPO"
-          test "$(jq -r '.head.sha' <<<"$pr_json")" = "$EVENT_PR_HEAD_SHA"
+
+          owner="${GH_REPO%%/*}"
+          prs_json="$(gh api -X GET "repos/$GH_REPO/pulls" \
+            -f state=open \
+            -f head="$owner:$RUN_HEAD_BRANCH" \
+            -f base=main \
+            -F per_page=100)"
+          matches="$(jq --arg repo "$GH_REPO" --arg sha "$RUN_HEAD_SHA" \
+            '[.[] | select(.state == "open" and .draft == false and .base.ref == "main" and .head.repo.full_name == $repo and .head.sha == $sha)]' \
+            <<<"$prs_json")"
+          match_count="$(jq 'length' <<<"$matches")"
+          test "$match_count" -eq 1
+          PR_NUMBER="$(jq -r '.[0].number' <<<"$matches")"
           echo "pr_number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
 
       - name: Check GitHub App Client ID
