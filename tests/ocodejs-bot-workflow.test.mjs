@@ -9,7 +9,8 @@ test("PR signal workflow has no credentials, checkout, or PR code execution", ()
   assert.match(signal, /pull_request:/);
   assert.match(signal, /permissions:\s*\{\}/);
   assert.match(signal, /draft == false/);
-  assert.doesNotMatch(signal, /opened|secrets\.|vars\.|actions\/checkout|npm (?:install|ci)|pnpm (?:install|test)|git diff/);
+  assert.match(signal, /opened/);
+  assert.doesNotMatch(signal, /secrets\.|vars\.|actions\/checkout|npm (?:install|ci)|pnpm (?:install|test)|git diff/);
 });
 
 test("trusted publisher is isolated behind workflow_run", () => {
