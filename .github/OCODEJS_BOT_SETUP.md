@@ -37,7 +37,8 @@ Fork-originated PRs may emit the unprivileged signal, but the trusted publisher 
 
 - The model receives only up to 50 KB of textual diff, not the full repository.
 - PR contents are treated as untrusted prompt data; the model is not given shell or repository write tools.
-- The PR signal workflow has no secrets and no permissions; the privileged publisher runs only from the default branch via `workflow_run` and never checks out PR code.\n- The App token is created after model processing and is scoped to Pull requests: write.
+- The PR signal workflow has no secrets and no permissions; the privileged publisher runs only from the default branch via `workflow_run` and never checks out PR code.
+- The App private key is first exposed to a trusted step after model inference; the App token is scoped to Pull requests: write. and is scoped to Pull requests: write.
 - No automatic code changes, commits, approvals, merges, or deployments are performed.
 - Local inference is API-key-free, but runner time, model download time, and bandwidth are still consumed. Public-repository standard GitHub-hosted Actions usage is currently free; private-repository usage is subject to plan quotas and billing.
 - Review comments are advisory and can be incorrect. Required CI and human review remain authoritative.
