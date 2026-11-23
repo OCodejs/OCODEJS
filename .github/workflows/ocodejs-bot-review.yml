@@ -2,7 +2,7 @@ name: OCodeJS Bot — PR Review Signal
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened, ready_for_review, edited]
+    types: [synchronize, reopened, ready_for_review, edited]
     branches: [main]
 
 # No secrets, no repository permissions, no checkout, and no PR-code execution.
@@ -14,6 +14,7 @@ concurrency:
 
 jobs:
   signal:
+    if: github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     timeout-minutes: 2
     steps:
