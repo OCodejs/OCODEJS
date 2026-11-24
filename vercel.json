@@ -1,0 +1,137 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "services": {
+    "app": {
+      "root": ".",
+      "framework": "vite"
+    },
+    "builder-orchestration": {
+      "root": "internals/builder-orchestration",
+      "framework": "vite"
+    },
+    "cli-builder-integration": {
+      "root": "internals/cli-builder-integration",
+      "framework": "vite"
+    },
+    "get-package-json": {
+      "root": "internals/get-package-json",
+      "framework": "vite"
+    },
+    "ipc-proxy": {
+      "root": "internals/ipc-proxy",
+      "framework": "vite"
+    },
+    "local-schedules": {
+      "root": "internals/local-schedules",
+      "framework": "vite"
+    },
+    "service-topology": {
+      "root": "internals/service-topology",
+      "framework": "vite"
+    },
+    "agent-setup": {
+      "root": "packages/agent-setup",
+      "framework": "vite"
+    },
+    "backends": {
+      "root": "packages/backends",
+      "framework": "vite"
+    },
+    "cli": {
+      "root": "packages/cli",
+      "framework": "vite"
+    },
+    "cli-auth": {
+      "root": "packages/cli-auth",
+      "framework": "vite"
+    },
+    "cli-config": {
+      "root": "packages/cli-config",
+      "framework": "vite"
+    },
+    "config": {
+      "root": "packages/config",
+      "framework": "vite"
+    },
+    "connect": {
+      "root": "packages/connect",
+      "framework": "eve"
+    },
+    "schedules-command-dispatcher": {
+      "root": "packages/container/schedules-command-dispatcher",
+      "runtime": "go"
+    },
+    "detect-agent": {
+      "root": "packages/detect-agent",
+      "framework": "vite"
+    },
+    "edge": {
+      "root": "packages/edge",
+      "framework": "vite"
+    },
+    "elysia": {
+      "root": "packages/elysia",
+      "framework": "vite"
+    },
+    "express": {
+      "root": "packages/express",
+      "framework": "vite"
+    },
+    "fastify": {
+      "root": "packages/fastify",
+      "framework": "vite"
+    },
+    "gatsby-plugin-vercel-builder": {
+      "root": "packages/gatsby-plugin-vercel-builder",
+      "framework": "vite"
+    },
+    "go": {
+      "root": "packages/go",
+      "runtime": "go"
+    },
+    "h3": {
+      "root": "packages/h3",
+      "framework": "vite"
+    },
+    "hono": {
+      "root": "packages/hono",
+      "framework": "vite"
+    },
+    "koa": {
+      "root": "packages/koa",
+      "framework": "vite"
+    },
+    "nestjs": {
+      "root": "packages/nestjs",
+      "framework": "vite"
+    },
+    "next": {
+      "root": "packages/next",
+      "framework": "vite"
+    },
+    "node": {
+      "root": "packages/node",
+      "framework": "vite"
+    },
+    "react-router": {
+      "root": "packages/react-router",
+      "framework": "vite"
+    },
+    "vercel-runtime": {
+      "root": "python/vercel-runtime",
+      "framework": "django"
+    },
+    "vercel-workers": {
+      "root": "python/vercel-workers",
+      "framework": "fastapi"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": {
+        "service": "app"
+      }
+    }
+  ]
+}
