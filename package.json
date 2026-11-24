@@ -80,6 +80,9 @@
   "engines": {
     "node": ">=18"
   },
+  "dependencies": {
+    "@vercel/analytics": "^2.0.1"
+  },
   "devDependencies": {
     "typescript": "^7.0.2"
   },
